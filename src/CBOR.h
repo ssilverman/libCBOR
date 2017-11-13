@@ -108,7 +108,11 @@ class Reader {
   double getDouble();
   uint64_t getUnsignedInt();
   int64_t getInt();
+
+  // Gets the simple value. Note that values < 32 are technically invalid.
+  // Values: 20=False, 21=True, 22=Null, 23=Undefined, 24-31=Reserved.
   uint8_t getSimpleValue();
+
   uint64_t getTag();
 
   // Checks if the next data item is well-formed. This includes any nested

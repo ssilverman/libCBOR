@@ -167,10 +167,10 @@ DataType Reader::readDataType() {
             value_ = 0;
             return DataType::kUndefined;
           case 24:
-            if (value_ < 32) {
-              syntaxError_ = SyntaxError::kBadSimpleValue;
-              return DataType::kSyntaxError;
-            }
+            // if (value_ < 32) {
+            //   syntaxError_ = SyntaxError::kBadSimpleValue;
+            //   return DataType::kSyntaxError;
+            // }
             return DataType::kSimpleValue;
             break;
           case 25:
@@ -379,9 +379,9 @@ int Reader::isWellFormed(bool breakable) {
         return -1;
       }
       val = static_cast<uint8_t>(v);
-      if (majorType == kSimpleOrFloat && val < 32) {
-        return -1;
-      }
+      // if (majorType == kSimpleOrFloat && val < 32) {
+      //   return -1;
+      // }
       break;
     }
     case 25: {

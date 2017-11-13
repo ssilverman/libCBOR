@@ -47,15 +47,19 @@ test(disallow_indefinite_tag) {
   assertEqual(static_cast<int>(cbor.getSyntaxError()), static_cast<int>(cbor::SyntaxError::kNotAnIndefiniteType));
 }
 
-test(disallow_some_simple_values) {
+// Technically, this test should disallow simple values < 32. They are
+// technically well-formed but invalid.
+test(disallow_but_allow_some_simple_values) {
   uint8_t b[] = { (7 << 5) + 24, 0 };
   for (int i = 0; i < 32; i++) {
     b[1] = i;
     cbor::BytesStream bs{b, sizeof(b)};
     cbor::Reader cbor{bs};
-    assertFalse(cbor.isWellFormed());
+    assertTrue(cbor.isWellFormed());
     bs.reset();
-    assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kSyntaxError));
-    assertEqual(static_cast<int>(cbor.getSyntaxError()), static_cast<int>(cbor::SyntaxError::kBadSimpleValue));
+    // assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kSyntaxError));
+    // assertEqual(static_cast<int>(cbor.getSyntaxError()), static_cast<int>(cbor::SyntaxError::kBadSimpleValue));
+    assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kSimpleValue));
+    assertEqual(cbor.getSimpleValue(), i);
   }
 }
