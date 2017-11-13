@@ -128,7 +128,7 @@ DataType Reader::readDataType() {
         // Shouldn't happen, caught before
         value_ = addlInfo_;
         break;
-      case 31:  // Indefinite length
+      case 31:  // Indefinite length or break
         value_ = 0;
         break;
       default:
@@ -158,10 +158,13 @@ DataType Reader::readDataType() {
         switch (addlInfo_) {
           case 20:  // False
           case 21:  // True
+            value_ = 0;
             return DataType::kBoolean;
           case 22:
+            value_ = 0;
             return DataType::kNull;
           case 23:
+            value_ = 0;
             return DataType::kUndefined;
           case 24:
             if (value_ < 32) {
@@ -182,6 +185,7 @@ DataType Reader::readDataType() {
             syntaxError_ = SyntaxError::kUnknownAdditionalInfo;
             return DataType::kSyntaxError;
           case 31:
+            value_ = 0;
             return DataType::kBreak;
           default:
             return DataType::kSimpleValue;
@@ -202,6 +206,10 @@ int Reader::readBytes(uint8_t *buffer, size_t length) {
 
 SyntaxError Reader::getSyntaxError() {
   return syntaxError_;
+}
+
+uint64_t getRawValue() {
+  return value_;
 }
 
 bool Reader::isIndefiniteLength() {
@@ -320,7 +328,7 @@ uint64_t Reader::getUnsignedInt() {
   if (majorType_ == kUnsignedInt) {
     return value_;
   }
-  return 0LL;
+  return 0ULL;
 }
 
 int64_t Reader::getInt() {
@@ -341,7 +349,7 @@ uint64_t Reader::getTag() {
   if (majorType_ == kTag) {
     return value_;
   }
-  return 0LL;
+  return 0ULL;
 }
 
 // ***************************************************************************

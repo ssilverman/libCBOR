@@ -83,6 +83,12 @@ class Reader {
   // DataType::kSyntaxError.
   SyntaxError getSyntaxError();
 
+  // Gets the raw value attached to the current data item. This will return
+  // a length for bytes, text, arrays, and maps. For indefinite length data
+  // items, this will return zero. For boolean, null, undefined, break, and
+  // other simple values less than 32, this will return zero.
+  uint64_t getRawValue();
+
   // Determines if the current bytes, text, array, or map has an indefinite
   // length. The end will be determined by a data item of type
   // DataType::kBreak.
