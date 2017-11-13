@@ -119,6 +119,9 @@ class Reader {
   // items and advances the stream. A data item is considered not well-formed
   // if there are syntax errors or end-of-stream has been reached before
   // processing all the data. This works best with a stream that can be reset.
+  //
+  // This calls yield() at the end of the function if the processor is
+  // an ESP8266.
   bool isWellFormed();
 
  private:
