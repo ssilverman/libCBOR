@@ -190,7 +190,7 @@ class Writer {
   // beginBytes or beginText was called, then it is up to the caller to
   // write enough bytes so that the total size matches the length given
   // in beginBytes or beginText.
-  void writeBytes(uint8_t *buffer, size_t length);
+  void writeBytes(const uint8_t *buffer, size_t length);
 
   // Starts a byte string having a specific length. It is up to the caller
   // to write the correct total number of bytes.
