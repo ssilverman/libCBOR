@@ -1,4 +1,5 @@
-// Streams.h contains definitions for useful Stream and Print implementations.
+// CBOR_streams.h contains definitions for useful Stream and Print
+// implementations.
 
 // Other includes
 #include <Print.h>

@@ -2,7 +2,7 @@
 
 // Project includes
 #include "CBOR.h"
-#include "Streams.h"
+#include "CBOR_streams.h"
 
 namespace qindesign {
 namespace cbor {
