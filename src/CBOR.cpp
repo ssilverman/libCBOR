@@ -208,7 +208,7 @@ SyntaxError Reader::getSyntaxError() {
   return syntaxError_;
 }
 
-uint64_t getRawValue() {
+uint64_t Reader::getRawValue() {
   return value_;
 }
 
