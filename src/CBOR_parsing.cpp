@@ -193,7 +193,7 @@ bool expectTag(Reader r, uint64_t *v) {
 
 unsigned int readFully(Reader r, uint8_t *b, size_t len) {
   size_t count = 0;
-  while (true) {
+  while (len > 0) {
     int read = r.readBytes(b, len);
     if (read < 0) {
       return count;
@@ -201,6 +201,7 @@ unsigned int readFully(Reader r, uint8_t *b, size_t len) {
     count += static_cast<size_t>(read);
     len -= static_cast<size_t>(read);
   }
+  return count;
 }
 
 DataType readUntilData(Reader r) {
