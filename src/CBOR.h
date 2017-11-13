@@ -39,7 +39,7 @@ enum class SyntaxError {
   kBadSimpleValue,
 };
 
-// CBORReader provides a way to parse bytes in a CBOR-encoded stream. This
+// Reader provides a way to parse bytes in a CBOR-encoded stream. This
 // class only provides rudimentary parsing for data items; callers will
 // have to manage nested depths themselves.
 //
@@ -48,9 +48,9 @@ enum class SyntaxError {
 //
 // If any of the getXXX() functions are called and the type does not match,
 // then a default value of zero or false is returned.
-class CBORReader {
+class Reader {
  public:
-  CBORReader(Stream &in)
+  Reader(Stream &in)
       : state_(State::kStart),
         in_(in),
         initialByte_(0),
@@ -59,7 +59,7 @@ class CBORReader {
         waitAvailable_(0),
         value_(0),
         syntaxError_(SyntaxError::kNoError) {}
-  ~CBORReader() = default;
+  ~Reader() = default;
 
   // Reads the start byte of a data item. This returns -1 if the end of
   // stream has been reached. If this returns a non-negative number, then
@@ -148,12 +148,12 @@ class CBORReader {
   SyntaxError syntaxError_;
 };
 
-// CBORWriter provides a way to encode data to a CBOR-encoded stream. Callers
+// Writer provides a way to encode data to a CBOR-encoded stream. Callers
 // need to manage proper structure themselves.
-class CBORWriter {
+class Writer {
  public:
-  CBORWriter(Print &out) : out_(out) {}
-  ~CBORWriter() = default;
+  Writer(Print &out) : out_(out) {}
+  ~Writer() = default;
 
   // Returns any write error in the underlying Print object. This will
   // return zero if there is no error.

@@ -8,7 +8,7 @@ test(disallow_bad_ai) {
     for (int j = 28; j <= 30; j++) {
       b[0] = (i << 5) + j;
       cbor::BytesStream bs{b, sizeof(b)};
-      cbor::CBORReader cbor{bs};
+      cbor::Reader cbor{bs};
       assertFalse(cbor.isWellFormed());
       bs.reset();
       assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kSyntaxError));
@@ -20,7 +20,7 @@ test(disallow_bad_ai) {
 test(disallow_indefinite_unsigned) {
   uint8_t b[] = { (0 << 5) + 31 };
   cbor::BytesStream bs{b, sizeof(b)};
-  cbor::CBORReader cbor{bs};
+  cbor::Reader cbor{bs};
   assertFalse(cbor.isWellFormed());
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kSyntaxError));
@@ -30,7 +30,7 @@ test(disallow_indefinite_unsigned) {
 test(disallow_indefinite_negative) {
   uint8_t b[] = { (1 << 5) + 31 };
   cbor::BytesStream bs{b, sizeof(b)};
-  cbor::CBORReader cbor{bs};
+  cbor::Reader cbor{bs};
   assertFalse(cbor.isWellFormed());
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kSyntaxError));
@@ -40,7 +40,7 @@ test(disallow_indefinite_negative) {
 test(disallow_indefinite_tag) {
   uint8_t b[] = { (6 << 5) + 31 };
   cbor::BytesStream bs{b, sizeof(b)};
-  cbor::CBORReader cbor{bs};
+  cbor::Reader cbor{bs};
   assertFalse(cbor.isWellFormed());
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kSyntaxError));
@@ -52,7 +52,7 @@ test(disallow_some_simple_values) {
   for (int i = 0; i < 32; i++) {
     b[1] = i;
     cbor::BytesStream bs{b, sizeof(b)};
-    cbor::CBORReader cbor{bs};
+    cbor::Reader cbor{bs};
     assertFalse(cbor.isWellFormed());
     bs.reset();
     assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kSyntaxError));

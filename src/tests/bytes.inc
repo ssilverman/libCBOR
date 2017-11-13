@@ -5,7 +5,7 @@
 test(bytes_empty) {
   uint8_t b[] = { (2 << 5) + 0 };
   cbor::BytesStream bs{b, sizeof(b)};
-  cbor::CBORReader cbor{bs};
+  cbor::Reader cbor{bs};
   assertTrue(cbor.isWellFormed());
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kBytes));
@@ -15,7 +15,7 @@ test(bytes_empty) {
 test(bytes_something) {
   uint8_t b[] = { (2 << 5) + 4, 0x01, 0x02, 0x03, 0x04, 0 };
   cbor::BytesStream bs{b, sizeof(b)};
-  cbor::CBORReader cbor{bs};
+  cbor::Reader cbor{bs};
   assertTrue(cbor.isWellFormed());
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kBytes));
@@ -28,7 +28,7 @@ test(bytes_something) {
 test(bytes_indefinite) {
   uint8_t b[] = { (2 << 5) + 31, (2 << 5) + 2, 0x01, 0x02, (2 << 5) + 3, 0x03, 0x04, 0x05, (7 << 5) + 31 };
   cbor::BytesStream bs{b, sizeof(b)};
-  cbor::CBORReader cbor{bs};
+  cbor::Reader cbor{bs};
   assertTrue(cbor.isWellFormed());
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kBytes));
@@ -50,7 +50,7 @@ test(bytes_indefinite) {
 test(text_empty) {
   uint8_t b[] = { (3 << 5) + 0 };
   cbor::BytesStream bs{b, sizeof(b)};
-  cbor::CBORReader cbor{bs};
+  cbor::Reader cbor{bs};
   assertTrue(cbor.isWellFormed());
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kText));
@@ -60,7 +60,7 @@ test(text_empty) {
 test(text_something) {
   uint8_t b[] = { (3 << 5) + 4, 0x49, 0x45, 0x54, 0x46, 0 };
   cbor::BytesStream bs{b, sizeof(b)};
-  cbor::CBORReader cbor{bs};
+  cbor::Reader cbor{bs};
   assertTrue(cbor.isWellFormed());
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kText));
@@ -73,7 +73,7 @@ test(text_something) {
 test(text_indefinite) {
   uint8_t b[] = { (3 << 5) + 31, (3 << 5) + 5, 0x73, 0x74, 0x72, 0x65, 0x61, (3 << 5) + 4, 0x6d, 0x69, 0x6e, 0x67, (7 << 5) + 31 };
   cbor::BytesStream bs{b, sizeof(b)};
-  cbor::CBORReader cbor{bs};
+  cbor::Reader cbor{bs};
   assertTrue(cbor.isWellFormed());
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kText));

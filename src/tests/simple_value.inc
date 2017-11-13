@@ -5,7 +5,7 @@
 test(boolean_false) {
   uint8_t b[] = { (7 << 5) + 20 };
   cbor::BytesStream bs{b, sizeof(b)};
-  cbor::CBORReader cbor{bs};
+  cbor::Reader cbor{bs};
   assertTrue(cbor.isWellFormed());
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kBoolean));
@@ -15,7 +15,7 @@ test(boolean_false) {
 test(boolean_true) {
   uint8_t b[] = { (7 << 5) + 21 };
   cbor::BytesStream bs{b, sizeof(b)};
-  cbor::CBORReader cbor{bs};
+  cbor::Reader cbor{bs};
   assertTrue(cbor.isWellFormed());
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kBoolean));
@@ -25,7 +25,7 @@ test(boolean_true) {
 test(null) {
   uint8_t b[] = { (7 << 5) + 22 };
   cbor::BytesStream bs{b, sizeof(b)};
-  cbor::CBORReader cbor{bs};
+  cbor::Reader cbor{bs};
   assertTrue(cbor.isWellFormed());
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kNull));
@@ -34,7 +34,7 @@ test(null) {
 test(undefined) {
   uint8_t b[] = { (7 << 5) + 23 };
   cbor::BytesStream bs{b, sizeof(b)};
-  cbor::CBORReader cbor{bs};
+  cbor::Reader cbor{bs};
   assertTrue(cbor.isWellFormed());
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kUndefined));
@@ -43,7 +43,7 @@ test(undefined) {
 test(simple_value_break) {
   uint8_t b[] = { (7 << 5) + 31 };
   cbor::BytesStream bs{b, sizeof(b)};
-  cbor::CBORReader cbor{bs};
+  cbor::Reader cbor{bs};
   assertFalse(cbor.isWellFormed());  // TODO: Can't have just a break?
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType(true)), static_cast<int>(cbor::DataType::kBreak));
@@ -52,7 +52,7 @@ test(simple_value_break) {
 test(simple_value_zero) {
   uint8_t b[] = { (7 << 5) + 0 };
   cbor::BytesStream bs{b, sizeof(b)};
-  cbor::CBORReader cbor{bs};
+  cbor::Reader cbor{bs};
   assertTrue(cbor.isWellFormed());
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kSimpleValue));
@@ -62,7 +62,7 @@ test(simple_value_zero) {
 test(simple_value_19) {
   uint8_t b[] = { (7 << 5) + 19 };
   cbor::BytesStream bs{b, sizeof(b)};
-  cbor::CBORReader cbor{bs};
+  cbor::Reader cbor{bs};
   assertTrue(cbor.isWellFormed());
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kSimpleValue));
@@ -72,7 +72,7 @@ test(simple_value_19) {
 test(simple_value_32_1_byte) {
   uint8_t b[] = { (7 << 5) + 24, 32 };
   cbor::BytesStream bs{b, sizeof(b)};
-  cbor::CBORReader cbor{bs};
+  cbor::Reader cbor{bs};
   assertTrue(cbor.isWellFormed());
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kSimpleValue));
@@ -82,7 +82,7 @@ test(simple_value_32_1_byte) {
 test(simple_value_255_1_byte) {
   uint8_t b[] = { (7 << 5) + 24, 255 };
   cbor::BytesStream bs{b, sizeof(b)};
-  cbor::CBORReader cbor{bs};
+  cbor::Reader cbor{bs};
   assertTrue(cbor.isWellFormed());
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kSimpleValue));

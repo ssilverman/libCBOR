@@ -5,7 +5,7 @@
 test(negative_zero) {
   uint8_t b[] = { (1 << 5) + 0 };
   cbor::BytesStream bs{b, sizeof(b)};
-  cbor::CBORReader cbor{bs};
+  cbor::Reader cbor{bs};
   assertTrue(cbor.isWellFormed());
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kNegativeInt));
@@ -15,7 +15,7 @@ test(negative_zero) {
 test(negative_19) {
   uint8_t b[] = { (1 << 5) + 19 };
   cbor::BytesStream bs{b, sizeof(b)};
-  cbor::CBORReader cbor{bs};
+  cbor::Reader cbor{bs};
   assertTrue(cbor.isWellFormed());
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kNegativeInt));
@@ -25,7 +25,7 @@ test(negative_19) {
 test(negative_23) {
   uint8_t b[] = { (1 << 5) + 23 };
   cbor::BytesStream bs{b, sizeof(b)};
-  cbor::CBORReader cbor{bs};
+  cbor::Reader cbor{bs};
   assertTrue(cbor.isWellFormed());
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kNegativeInt));
@@ -35,7 +35,7 @@ test(negative_23) {
 test(negative_1_byte) {
   uint8_t b[] = { (1 << 5) + 24, 0x12 };
   cbor::BytesStream bs{b, sizeof(b)};
-  cbor::CBORReader cbor{bs};
+  cbor::Reader cbor{bs};
   assertTrue(cbor.isWellFormed());
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kNegativeInt));
@@ -45,7 +45,7 @@ test(negative_1_byte) {
 test(negative_2_bytes) {
   uint8_t b[] = { (1 << 5) + 25, 0x12, 0x34 };
   cbor::BytesStream bs{b, sizeof(b)};
-  cbor::CBORReader cbor{bs};
+  cbor::Reader cbor{bs};
   assertTrue(cbor.isWellFormed());
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kNegativeInt));
@@ -55,7 +55,7 @@ test(negative_2_bytes) {
 test(negative_4_bytes) {
   uint8_t b[] = { (1 << 5) + 26, 0x12, 0x34, 0x56, 0x78 };
   cbor::BytesStream bs{b, sizeof(b)};
-  cbor::CBORReader cbor{bs};
+  cbor::Reader cbor{bs};
   assertTrue(cbor.isWellFormed());
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kNegativeInt));
@@ -65,7 +65,7 @@ test(negative_4_bytes) {
 test(negative_8_bytes) {
   uint8_t b[] = { (1 << 5) + 27, 0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0xde, 0xf0 };
   cbor::BytesStream bs{b, sizeof(b)};
-  cbor::CBORReader cbor{bs};
+  cbor::Reader cbor{bs};
   assertTrue(cbor.isWellFormed());
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kNegativeInt));

@@ -21,10 +21,10 @@ constexpr int kTag           = 6;
 constexpr int kSimpleOrFloat = 7;
 
 // ***************************************************************************
-//  CBORReader
+//  Reader
 // ***************************************************************************
 
-DataType CBORReader::readDataType(bool allowBreak) {
+DataType Reader::readDataType(bool allowBreak) {
   // Read the initial byte
   if (state_ == State::kStart) {
     // Initialize everything to a default
@@ -199,15 +199,15 @@ DataType CBORReader::readDataType(bool allowBreak) {
   return DataType::kEOS;
 }
 
-int CBORReader::readBytes(uint8_t *buffer, size_t length) {
+int Reader::readBytes(uint8_t *buffer, size_t length) {
   return in_.readBytes(buffer, length);
 }
 
-SyntaxError CBORReader::getSyntaxError() {
+SyntaxError Reader::getSyntaxError() {
   return syntaxError_;
 }
 
-bool CBORReader::isIndefiniteLength() {
+bool Reader::isIndefiniteLength() {
   switch (majorType_) {
     case kBytes:  // Bytes
     case kText:  // Text
@@ -218,11 +218,11 @@ bool CBORReader::isIndefiniteLength() {
   return false;
 }
 
-uint64_t CBORReader::getLength() {
+uint64_t Reader::getLength() {
   return value_;
 }
 
-bool CBORReader::getBoolean() {
+bool Reader::getBoolean() {
   if (majorType_ == kSimpleOrFloat) {
     if (addlInfo_ == 21) {
       return true;
@@ -234,11 +234,11 @@ bool CBORReader::getBoolean() {
   return false;
 }
 
-float CBORReader::getFloat() {
+float Reader::getFloat() {
   return static_cast<float>(getDouble());
 }
 
-double CBORReader::getDouble() {
+double Reader::getDouble() {
   // NOTE: Doing the conversion this way avoids endian and size differences
 
   if (majorType_ != kSimpleOrFloat) {
@@ -319,28 +319,28 @@ double CBORReader::getDouble() {
   return 0.0;
 }
 
-uint64_t CBORReader::getUnsignedInt() {
+uint64_t Reader::getUnsignedInt() {
   if (majorType_ == kUnsignedInt) {
     return value_;
   }
   return 0LL;
 }
 
-int64_t CBORReader::getInt() {
+int64_t Reader::getInt() {
   if (majorType_ == kNegativeInt) {
     return -1LL - static_cast<int64_t>(value_);
   }
   return 0LL;
 }
 
-uint8_t CBORReader::getSimpleValue() {
+uint8_t Reader::getSimpleValue() {
   if (majorType_ == kSimpleOrFloat) {
     return static_cast<uint8_t>(value_);
   }
   return 0;
 }
 
-uint64_t CBORReader::getTag() {
+uint64_t Reader::getTag() {
   if (majorType_ == kTag) {
     return value_;
   }
@@ -351,7 +351,7 @@ uint64_t CBORReader::getTag() {
 //  Well-formedness checks
 // ***************************************************************************
 
-bool CBORReader::isWellFormed() {
+bool Reader::isWellFormed() {
   bool retval = (isWellFormed(false) >= 0);
 #ifdef ESP8266
   yield();
@@ -359,7 +359,7 @@ bool CBORReader::isWellFormed() {
   return retval;
 }
 
-int CBORReader::isWellFormed(bool breakable) {
+int Reader::isWellFormed(bool breakable) {
   int ib = in_.read();  // Initial byte
   if (ib < 0) {
     return -1;
@@ -474,7 +474,7 @@ int CBORReader::isWellFormed(bool breakable) {
   return majorType;
 }
 
-int CBORReader::isIndefiniteWellFormed(uint8_t majorType, bool breakable) {
+int Reader::isIndefiniteWellFormed(uint8_t majorType, bool breakable) {
   switch (majorType) {
     case kBytes:
     case kText:
@@ -530,14 +530,14 @@ int CBORReader::isIndefiniteWellFormed(uint8_t majorType, bool breakable) {
 }
 
 // ***************************************************************************
-//  CBORWriter
+//  Writer
 // ***************************************************************************
 
-void CBORWriter::writeBoolean(bool b) {
+void Writer::writeBoolean(bool b) {
   out_.write((kSimpleOrFloat << 5) + (b ? 21 : 20));
 }
 
-void CBORWriter::writeFloat(float f) {
+void Writer::writeFloat(float f) {
   out_.write((kSimpleOrFloat << 5) + 26);
 
   // constexpr int kBitsM = 23;
@@ -578,7 +578,7 @@ void CBORWriter::writeFloat(float f) {
   out_.write(val);
 }
 
-void CBORWriter::writeDouble(double d) {
+void Writer::writeDouble(double d) {
   out_.write((kSimpleOrFloat << 5) + 27);
 
   // constexpr int kBitsM = 52;
@@ -623,18 +623,18 @@ void CBORWriter::writeDouble(double d) {
   out_.write(val);
 }
 
-void CBORWriter::writeUnsignedInt(uint64_t u) {
+void Writer::writeUnsignedInt(uint64_t u) {
   writeTypedInt(kUnsignedInt << 5, u);
 }
 
-void CBORWriter::writeInt(int64_t i) {
+void Writer::writeInt(int64_t i) {
   uint64_t u = i >> 63;                  // Extend sign
   uint8_t mt = u & (kNegativeInt << 5);  // Major type, 0x20 (signed) or 0x00 (unsigned)
   u ^= i;                                // Complement negatives, equivalent to -1 - i
   writeTypedInt(mt, u);
 }
 
-void CBORWriter::writeTypedInt(uint8_t mt, uint64_t u) {
+void Writer::writeTypedInt(uint8_t mt, uint64_t u) {
   if (u < 24) {
     out_.write(mt + u);
   } else if (u < (1 << 8)) {
@@ -663,15 +663,15 @@ void CBORWriter::writeTypedInt(uint8_t mt, uint64_t u) {
   }
 }
 
-void CBORWriter::writeNull() {
+void Writer::writeNull() {
   out_.write((kSimpleOrFloat << 5) + 22);
 }
 
-void CBORWriter::writeUndefined() {
+void Writer::writeUndefined() {
   out_.write((kSimpleOrFloat << 5) + 23);
 }
 
-void CBORWriter::writeSimpleValue(uint8_t v) {
+void Writer::writeSimpleValue(uint8_t v) {
   if (v < 24) {
     out_.write((kSimpleOrFloat << 5) + v);
   } else {
@@ -680,47 +680,47 @@ void CBORWriter::writeSimpleValue(uint8_t v) {
   }
 }
 
-void CBORWriter::writeTag(uint64_t v) {
+void Writer::writeTag(uint64_t v) {
   writeTypedInt(kTag << 5, v);
 }
 
-void CBORWriter::writeBytes(uint8_t *buffer, size_t length) {
+void Writer::writeBytes(uint8_t *buffer, size_t length) {
   out_.write(buffer, length);
 }
 
-void CBORWriter::beginBytes(unsigned int length) {
+void Writer::beginBytes(unsigned int length) {
   writeTypedInt(kBytes << 5, length);
 }
 
-void CBORWriter::beginText(unsigned int length) {
+void Writer::beginText(unsigned int length) {
   writeTypedInt(kText << 5, length);
 }
 
-void CBORWriter::beginIndefiniteBytes() {
+void Writer::beginIndefiniteBytes() {
   out_.write((kBytes << 5) + 31);
 }
 
-void CBORWriter::beginIndefiniteText() {
+void Writer::beginIndefiniteText() {
   out_.write((kText << 5) + 31);
 }
 
-void CBORWriter::beginArray(unsigned int length) {
+void Writer::beginArray(unsigned int length) {
   writeTypedInt(kArray << 5, length);
 }
 
-void CBORWriter::beginMap(unsigned int length) {
+void Writer::beginMap(unsigned int length) {
   writeTypedInt(kMap << 5, length);
 }
 
-void CBORWriter::beginIndefiniteArray() {
+void Writer::beginIndefiniteArray() {
   out_.write((kArray << 5) + 31);
 }
 
-void CBORWriter::beginIndefiniteMap() {
+void Writer::beginIndefiniteMap() {
   out_.write((kMap << 5) + 31);
 }
 
-void CBORWriter::endIndefinite() {
+void Writer::endIndefinite() {
   out_.write((kSimpleOrFloat << 5) + 31);
 }
 

@@ -12,7 +12,7 @@ bool isEEPROMWellFormed(size_t eepromSize, int address) {
     return false;
   }
   EEPROMStream es{eepromSize, address};
-  CBORReader cbor{es};
+  Reader cbor{es};
   return cbor.isWellFormed();
 }
 
