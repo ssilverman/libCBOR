@@ -200,11 +200,17 @@ class Writer {
   // Starts a byte string having no specific length. It is up to the caller
   // to write the correct total number of bytes by calling beginBytes followed
   // by an appropriate number of writeBytes calls.
+  //
+  // When done, endIndefinite() needs to be called to end the sequence
+  // of bytes items.
   void beginIndefiniteBytes();
 
   // Starts a text string having no specific length. It is up to the caller
   // to write the correct total number of bytes by calling beginText followed
   // by an appropriate number of writeBytes calls.
+  //
+  // When done, endIndefinite() needs to be called to end the sequence
+  // of text items.
   void beginIndefiniteText();
 
   // Starts an array having a specific length. It is up to the caller
@@ -217,11 +223,17 @@ class Writer {
 
   // Starts an array having no specific length. It is up to the caller to
   // call endIndefinite after the correct number of elements has been written.
+  //
+  // When done, endIndefinite() needs to be called to end the sequence
+  // of items.
   void beginIndefiniteArray();
 
   // Starts a map having no specific length. It is up to the caller to
   // call endIndefinite after the correct number of key/value pairs has
   // been written.
+  //
+  // When done, endIndefinite() needs to be called to end the sequence
+  // of items.
   void beginIndefiniteMap();
 
   // Ends an indefinite stream of bytes, text, array elements, or map pairs.
