@@ -1,4 +1,6 @@
 // CBOR_utils.h contains definitions for some CBOR utility functions.
+// This is part of libCBOR.
+// (c) 2017 Shawn Silverman
 
 #ifndef CBOR_UTILS_H_
 #define CBOR_UTILS_H_

@@ -1,3 +1,6 @@
+// CBOR_parsing.cpp is part of libCBOR.
+// (c) 2017 Shawn Silverman
+
 #include "CBOR_parsing.h"
 
 // C++ includes

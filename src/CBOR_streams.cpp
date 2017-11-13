@@ -1,3 +1,6 @@
+// CBOR_streams.cpp is part of libCBOR.
+// (c) 2017 Shawn Silverman
+
 #include "CBOR_streams.h"
 
 // Other includes

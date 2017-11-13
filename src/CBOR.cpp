@@ -1,3 +1,6 @@
+// CBOR.cpp is part of libCBOR.
+// (c) 2017 Shawn Silverman
+
 #include "CBOR.h"
 
 // C++ includes

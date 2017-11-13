@@ -1,3 +1,6 @@
+// tests.cpp is part of libCBOR.
+// (c) 2017 Shawn Silverman
+
 #include "tests.h"
 
 // C++ includes

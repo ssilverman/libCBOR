@@ -1,4 +1,6 @@
 // CBOR_parsing.h contains functions that help with parsing CBOR data.
+// This is part of libCBOR.
+// (c) 2017 Shawn Silverman
 
 #ifndef CBOR_PARSING_H_
 #define CBOR_PARSING_H_

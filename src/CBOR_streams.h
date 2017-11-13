@@ -1,5 +1,7 @@
-// CBOR_streams.h contains definitions for useful Stream and Print
-// implementations.
+// CBOR_streams.h contains definitions for useful Stream and
+// Print implementations.
+// This is part of libCBOR.
+// (c) 2017 Shawn Silverman
 
 // Other includes
 #include <Print.h>

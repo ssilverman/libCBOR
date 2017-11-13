@@ -1,5 +1,7 @@
 // CBOR.h defines CBOR functions.
 // See [Concise Binary Object Representation (CBOR)](https://tools.ietf.org/html/rfc7049)
+// This is part of libCBOR.
+// (c) 2017 Shawn Silverman
 
 #ifndef QINDESIGN_CBOR_H_
 #define QINDESIGN_CBOR_H_

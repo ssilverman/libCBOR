@@ -1,3 +1,6 @@
+// CBOR_utils.cpp is part of libCBOR.
+// (c) 2017 Shawn Silverman
+
 #include "CBOR_utils.h"
 
 // Project includes
