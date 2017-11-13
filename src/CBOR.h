@@ -120,7 +120,8 @@ class Reader {
   // Checks if the next data item is well-formed. This includes any nested
   // items and advances the stream. A data item is considered not well-formed
   // if there are syntax errors or end-of-stream has been reached before
-  // processing all the data. This works best with a stream that can be reset.
+  // processing all the data. Since this advances the stream, this works best
+  // with a stream that can be reset.
   //
   // This calls yield() at the end of the function if the processor is
   // an ESP8266.
