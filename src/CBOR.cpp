@@ -692,7 +692,7 @@ void Writer::writeTag(uint64_t v) {
   writeTypedInt(kTag << 5, v);
 }
 
-void Writer::writeBytes(uint8_t *buffer, size_t length) {
+void Writer::writeBytes(const uint8_t *buffer, size_t length) {
   out_.write(buffer, length);
 }
 
