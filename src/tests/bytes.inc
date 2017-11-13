@@ -41,7 +41,7 @@ test(bytes_indefinite) {
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kBytes));
   assertTrue(cbor.getLength() == 3);
   assertEqual(cbor.readBytes(&b2[2], 3), 3);
-  assertEqual(static_cast<int>(cbor.readDataType(true)), static_cast<int>(cbor::DataType::kBreak));
+  assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kBreak));
 
   uint8_t b3[] = { 0x01, 0x02, 0x03, 0x04, 0x05, 0 };
   assertEqual(reinterpret_cast<char*>(b2), reinterpret_cast<char*>(b3));
@@ -87,7 +87,7 @@ test(text_indefinite) {
   assertTrue(cbor.getLength() == 4);
   assertEqual(cbor.readBytes(&b2[5], 4), 4);
 
-  assertEqual(static_cast<int>(cbor.readDataType(true)), static_cast<int>(cbor::DataType::kBreak));
+  assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kBreak));
 
   uint8_t b3[] = { 0x73, 0x74, 0x72, 0x65, 0x61, 0x6d, 0x69, 0x6e, 0x67, 0 };
   assertEqual(reinterpret_cast<char*>(b2), reinterpret_cast<char*>(b3));

@@ -46,7 +46,7 @@ test(simple_value_break) {
   cbor::Reader cbor{bs};
   assertFalse(cbor.isWellFormed());  // TODO: Can't have just a break?
   bs.reset();
-  assertEqual(static_cast<int>(cbor.readDataType(true)), static_cast<int>(cbor::DataType::kBreak));
+  assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kBreak));
 }
 
 test(simple_value_zero) {

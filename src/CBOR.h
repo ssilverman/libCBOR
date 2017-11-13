@@ -61,20 +61,16 @@ class Reader {
         syntaxError_(SyntaxError::kNoError) {}
   ~Reader() = default;
 
-  // Reads the start byte of a data item. This returns -1 if the end of
-  // stream has been reached. If this returns a non-negative number, then
-  // this guarantees that all the bytes necessary for any attached value
-  // are available from the stream.
+  // Reads the data type of the next data item. This returns DataType::kEOS
+  // if the end of stream has been reached. Otherwise, this guarantees that
+  // all the bytes necessary for any attached value are available from the
+  // stream.
   //
   // Once the type is known, one of the getXXX() functions can be called
   // to retrieve any immediate values. If this is called and returns
   // DataType::kEOS, then the data from any of the getXXX() functions will
   // be invalid.
-  //
-  // The allowBreak parameter indicates that the break character is allowed
-  // because we are inside an indefinite length data item. If this parameter
-  // is false, break characters will cause this to return a syntax error.
-  DataType readDataType(bool allowBreak = false);
+  DataType readDataType();
 
   // Reads data for bytes or text. It is up to the caller to read the correct
   // number of bytes, and also to concatenate any definite-length portions

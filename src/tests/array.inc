@@ -20,7 +20,7 @@ test(array_indefinite_empty) {
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kArray));
   assertTrue(cbor.isIndefiniteLength());
-  assertEqual(static_cast<int>(cbor.readDataType(true)), static_cast<int>(cbor::DataType::kBreak));
+  assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kBreak));
 }
 
 test(array_something) {
@@ -58,5 +58,5 @@ test(array_indefinite) {
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kNegativeInt));
   assertTrue(cbor.getInt() == -4);
 
-  assertEqual(static_cast<int>(cbor.readDataType(true)), static_cast<int>(cbor::DataType::kBreak));
+  assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kBreak));
 }

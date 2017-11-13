@@ -20,7 +20,7 @@ test(map_indefinite_empty) {
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kMap));
   assertTrue(cbor.isIndefiniteLength());
-  assertEqual(static_cast<int>(cbor.readDataType(true)), static_cast<int>(cbor::DataType::kBreak));
+  assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kBreak));
 }
 
 test(map_something) {
@@ -60,5 +60,5 @@ test(map_indefinite) {
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kUnsignedInt));
   assertTrue(cbor.getUnsignedInt() == 24);
 
-  assertEqual(static_cast<int>(cbor.readDataType(true)), static_cast<int>(cbor::DataType::kBreak));
+  assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kBreak));
 }

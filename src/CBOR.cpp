@@ -24,7 +24,7 @@ constexpr int kSimpleOrFloat = 7;
 //  Reader
 // ***************************************************************************
 
-DataType Reader::readDataType(bool allowBreak) {
+DataType Reader::readDataType() {
   // Read the initial byte
   if (state_ == State::kStart) {
     // Initialize everything to a default
@@ -75,10 +75,7 @@ DataType Reader::readDataType(bool allowBreak) {
             syntaxError_ = SyntaxError::kNotAnIndefiniteType;
             return DataType::kSyntaxError;
           case kSimpleOrFloat:  // Floating-point numbers and simple data types
-            if (!allowBreak) {
-              syntaxError_ = SyntaxError::kNotAnIndefiniteType;
-              return DataType::kSyntaxError;
-            }
+            // Always allow breaks
             break;
         }
         state_ = State::kReadValue;
