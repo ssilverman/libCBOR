@@ -24,6 +24,51 @@ can be found as follows:
 * `Stream` and `Print` implementations: `src/CBOR_streams.h`
 * Parsing helpers: `src/CBOR_parsing.h`
 
+## Installing as an Arduino library
+
+Not all the files in this project are necessary in an installed library.
+Only the following files and directories need to be there:
+
+* `examples/`
+* `library.properties`
+* `LICENSE`
+* `README.md`
+* `src/CBOR*`
+
+## Running the tests
+
+There are tests included in this project that rely on a project called
+[ArduinoUnit](https://github.com/mmurdoch/arduinounit). This should work
+out of the box on a Teensy, but some modifications may need to be made for
+ESP8266-based devices.
+
+### Running the tests on an ESP8266-based device
+
+In ArduinoUnit's source, change `ArduinoUnitUtility/Compare.h` so that the
+`#if defined(F)` block at the top is changed to:
+
+```c++
+#if defined(F)
+#ifdef ESP8266
+#define typeof(x) __typeof__(x)
+#undef PROGMEM
+#define PROGMEM
+#undef PGM_P
+#define PGM_P  		 const char *
+#undef PGM_VOID_P
+#define PGM_VOID_P const void *
+#undef PSTR
+#define PSTR(s) (s)
+#undef pgm_read_byte
+#define pgm_read_byte(addr) (*reinterpret_cast<const uint8_t*>(addr))
+#undef pgm_read_word
+#define pgm_read_word(addr) (*reinterpret_cast<const uint16_t*>(addr))
+#else
+#include <avr/pgmspace.h>
+#endif  // ESP8266
+#endif
+```
+
 ## Code style
 
 Code style for this project follows the
