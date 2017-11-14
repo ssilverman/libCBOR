@@ -77,7 +77,7 @@ Code style for this project follows the
 ## References
 
 1. Concise Binary Object Representation (CBOR):
-   [RFC7049](https://tools.ietf.org/html/rfc7049)
+   [RFC 7049](https://tools.ietf.org/html/rfc7049)
 
 ---
 
