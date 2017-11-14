@@ -153,7 +153,7 @@ test(write_double_1p1) {
   uint8_t b[9]{0};
   cbor::BytesPrint bp{b, sizeof(b)};
   cbor::Writer cbor{bp};
-  cbor.writeDouble(1.1L);
+  cbor.writeDouble(1.1);
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
@@ -171,7 +171,7 @@ test(write_double_negative_4p1) {
   uint8_t b[9]{0};
   cbor::BytesPrint bp{b, sizeof(b)};
   cbor::Writer cbor{bp};
-  cbor.writeDouble(-4.1L);
+  cbor.writeDouble(-4.1);
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
@@ -189,7 +189,7 @@ test(write_double_large) {
   uint8_t b[9]{0};
   cbor::BytesPrint bp{b, sizeof(b)};
   cbor::Writer cbor{bp};
-  cbor.writeDouble(1.0e+300L);
+  cbor.writeDouble(1.0e+300);
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
@@ -333,7 +333,7 @@ test(write_unsigned_4_bytes) {
   uint8_t b[5]{0};
   cbor::BytesPrint bp{b, sizeof(b)};
   cbor::Writer cbor{bp};
-  cbor.writeUnsignedInt(0x01020304L);
+  cbor.writeUnsignedInt(0x01020304UL);
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
@@ -351,7 +351,7 @@ test(write_unsigned_8_bytes) {
   uint8_t b[9]{0};
   cbor::BytesPrint bp{b, sizeof(b)};
   cbor::Writer cbor{bp};
-  cbor.writeUnsignedInt(0x0102030405060708LL);
+  cbor.writeUnsignedInt(0x0102030405060708ULL);
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
@@ -607,7 +607,7 @@ test(write_tag_4_bytes) {
   uint8_t b[6]{0};
   cbor::BytesPrint bp{b, sizeof(b)};
   cbor::Writer cbor{bp};
-  cbor.writeTag(0x01020304L);
+  cbor.writeTag(0x01020304UL);
   cbor.writeUnsignedInt(1);  // Ensure there's something after the tag for well-formedness
 
   cbor::BytesStream bs{b, sizeof(b)};
@@ -626,7 +626,7 @@ test(write_tag_8_bytes) {
   uint8_t b[10]{0};
   cbor::BytesPrint bp{b, sizeof(b)};
   cbor::Writer cbor{bp};
-  cbor.writeTag(0x0102030405060708LL);
+  cbor.writeTag(0x0102030405060708ULL);
   cbor.writeUnsignedInt(1);  // Ensure there's something after the tag for well-formedness
 
   cbor::BytesStream bs{b, sizeof(b)};

@@ -62,7 +62,7 @@ test(unsigned_4_bytes) {
   assertTrue(cbor.isWellFormed());
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kUnsignedInt));
-  assertTrue(cbor.getUnsignedInt() == 0x12345678L);
+  assertTrue(cbor.getUnsignedInt() == 0x12345678UL);
 }
 
 test(unsigned_8_bytes) {
@@ -72,5 +72,5 @@ test(unsigned_8_bytes) {
   assertTrue(cbor.isWellFormed());
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kUnsignedInt));
-  assertTrue(cbor.getUnsignedInt() == 0x123456789abcdef0LL);
+  assertTrue(cbor.getUnsignedInt() == 0x123456789abcdef0ULL);
 }

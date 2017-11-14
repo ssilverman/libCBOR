@@ -282,12 +282,12 @@ double Reader::getDouble() {
     // constexpr int kExpBias = (1 << (kBitsE - 1)) - 1;  // 127
     // uint32_t single = static_cast<uint32_t>(value_);
     // int e = (single >> kBitsM) & ((1 << kBitsE) - 1);
-    // long m = single & ((1L << kBitsM) - 1);
+    // unsigned long m = single & ((1UL << kBitsM) - 1);
     // double val;
     // if (e == 0) {
     //   val = ldexp(m, 1 - kExpBias - kBitsM);
     // } else if (e != (1 << kBitsE) - 1) {
-    //   val = ldexp(m + (1L << kBitsM), e - kExpBias - kBitsM);
+    //   val = ldexp(m + (1UL << kBitsM), e - kExpBias - kBitsM);
     // } else if (m == 0) {
     //   val = INFINITY;
     // } else {  // NaN
@@ -296,7 +296,7 @@ double Reader::getDouble() {
     //   memcpy(&f, &bits, 4);  // TODO: Is the size always 4?
     //   return f;
     // }
-    // double sign = (single & (1L << (kBitsM + kBitsE))) ? -1 : 1;
+    // double sign = (single & (1UL << (kBitsM + kBitsE))) ? -1 : 1;
     // return copysign(val, sign);
   }
 
@@ -308,19 +308,19 @@ double Reader::getDouble() {
     // constexpr int kBitsE = 11;
     // constexpr int kExpBias = (1 << (kBitsE - 1)) - 1;  // 1023
     // int e = (value_ >> kBitsM) & ((1 << kBitsE) - 1);
-    // long long m = value_ & ((1LL << kBitsM) - 1);
+    // unsigned long long m = value_ & ((1ULL << kBitsM) - 1);
     // double val;
     // if (e == 0) {
     //   val = ldexp(m, 1 - kExpBias - kBitsM);
     // } else if (e != (1 << kBitsE) - 1) {
-    //   val = ldexp(m + (1LL << kBitsM), e - kExpBias - kBitsM);
+    //   val = ldexp(m + (1ULL << kBitsM), e - kExpBias - kBitsM);
     // } else if (m == 0) {
     //   val = INFINITY;
     // } else {  // NaN
     //   memcpy(&val, &value_, 8);  // TODO: Is the size always 8?
     //   return val;
     // }
-    // double sign = (value_ & (1LL << (kBitsM + kBitsE))) ? -1 : 1;
+    // double sign = (value_ & (1ULL << (kBitsM + kBitsE))) ? -1 : 1;
     // return copysign(val, sign);
   }
 
@@ -557,27 +557,27 @@ void Writer::writeFloat(float f) {
   //   memcpy(&val, &f, 4);  // TODO: Is the size always 4?
   // } else if (std::isinf(f)) {
   //   // All 1's for the exponent
-  //   val = ((1L << kBitsE) - 1L) << kBitsM;
+  //   val = ((1UL << kBitsE) - 1UL) << kBitsM;
   // } else if (f == 0) {
   //   val = 0;
   // } else {
   //   float f2 = (f < 0) ? -f : f;
   //   constexpr int kExpBias = (1 << (kBitsE - 1)) - 1;  // 127
   //   int e = ilogb(f2);
-  //   long m;
+  //   unsigned long m;
   //   if (e <= -kExpBias) {
   //     // exp = 1 - kExpBias - kBitsM
   //     e = 0;
-  //     m = static_cast<long>(scalbn(f2, -(1 - kExpBias - kBitsM)));
+  //     m = static_cast<unsigned long>(scalbn(f2, -(1 - kExpBias - kBitsM)));
   //   } else {
   //     // exp = e - kExpBias - kBitsM
-  //     m = static_cast<long>(scalbn(f2, -(e - kBitsM))) - (1L << kBitsM);
+  //     m = static_cast<unsigned long>(scalbn(f2, -(e - kBitsM))) - (1UL << kBitsM);
   //     e += kExpBias;
   //   }
-  //   val = (long{e} << kBitsM) | m;
+  //   val = (static_cast<unsigned long>(e) << kBitsM) | m;
   // }
   // if (!std::isnan(f) && std::signbit(f)) {
-  //   val |= (1L << 31);
+  //   val |= (1UL << 31);
   // }
 
   out_.write(val >> 24);
@@ -598,27 +598,27 @@ void Writer::writeDouble(double d) {
   //   memcpy(&val, &d, 8);  // TODO: Is the size always 8?
   // } else if (std::isinf(d)) {
   //   // All 1's for the exponent
-  //   val = ((1LL << kBitsE) - 1LL) << kBitsM;
+  //   val = ((1ULL << kBitsE) - 1ULL) << kBitsM;
   // } else if (d == 0) {
   //   val = 0;
   // } else {
   //   double d2 = (d < 0) ? -d : d;
   //   constexpr int kExpBias = (1 << (kBitsE - 1)) - 1;  // 1023
   //   int e = ilogb(d2);
-  //   long long m;
+  //   unsigned long long m;
   //   if (e <= -kExpBias) {
   //     // exp = 1 - kExpBias - kBitsM
   //     e = 0;
-  //     m = static_cast<long long>(scalbn(d2, -(1 - kExpBias - kBitsM)));
+  //     m = static_cast<unsigned long long>(scalbn(d2, -(1 - kExpBias - kBitsM)));
   //   } else {
   //     // exp = e - kExpBias - kBitsM
-  //     m = static_cast<long long>(scalbn(d2, -(e - kBitsM))) - (1LL << kBitsM);
+  //     m = static_cast<unsigned long long>(scalbn(d2, -(e - kBitsM))) - (1ULL << kBitsM);
   //     e += kExpBias;
   //   }
-  //   val = ((long long){e} << kBitsM) | m;
+  //   val = (static_cast<unsigned long long>(e) << kBitsM) | m;
   // }
   // if (!std::isnan(d) && std::signbit(d)) {
-  //   val |= (1LL << 63);
+  //   val |= (1ULL << 63);
   // }
 
   out_.write(val >> 56);
@@ -648,11 +648,11 @@ void Writer::writeTypedInt(uint8_t mt, uint64_t u) {
   } else if (u < (1 << 8)) {
     out_.write(mt + 24);
     out_.write(u);
-  } else if (u < (1L << 16)) {
+  } else if (u < (1UL << 16)) {
     out_.write(mt + 25);
     out_.write(u >> 8);
     out_.write(u);
-  } else if (u < (1LL << 32)) {
+  } else if (u < (1ULL << 32)) {
     out_.write(mt + 26);
     out_.write(u >> 24);
     out_.write(u >> 16);
