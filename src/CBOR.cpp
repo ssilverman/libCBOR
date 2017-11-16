@@ -207,15 +207,15 @@ int Reader::readBytes(uint8_t *buffer, size_t length) {
   return in_.readBytes(buffer, length);
 }
 
-SyntaxError Reader::getSyntaxError() {
+SyntaxError Reader::getSyntaxError() const {
   return syntaxError_;
 }
 
-uint64_t Reader::getRawValue() {
+uint64_t Reader::getRawValue() const {
   return value_;
 }
 
-bool Reader::isIndefiniteLength() {
+bool Reader::isIndefiniteLength() const {
   switch (majorType_) {
     case kBytes:  // Bytes
     case kText:  // Text
@@ -226,11 +226,11 @@ bool Reader::isIndefiniteLength() {
   return false;
 }
 
-uint64_t Reader::getLength() {
+uint64_t Reader::getLength() const {
   return value_;
 }
 
-bool Reader::getBoolean() {
+bool Reader::getBoolean() const {
   if (majorType_ == kSimpleOrFloat) {
     if (addlInfo_ == 21) {
       return true;
@@ -242,11 +242,11 @@ bool Reader::getBoolean() {
   return false;
 }
 
-float Reader::getFloat() {
+float Reader::getFloat() const {
   return static_cast<float>(getDouble());
 }
 
-double Reader::getDouble() {
+double Reader::getDouble() const {
   // NOTE: Doing the conversion this way avoids endian and size differences
 
   if (majorType_ != kSimpleOrFloat) {
@@ -327,28 +327,28 @@ double Reader::getDouble() {
   return 0.0;
 }
 
-uint64_t Reader::getUnsignedInt() {
+uint64_t Reader::getUnsignedInt() const {
   if (majorType_ == kUnsignedInt) {
     return value_;
   }
   return 0ULL;
 }
 
-int64_t Reader::getInt() {
+int64_t Reader::getInt() const {
   if (majorType_ == kNegativeInt) {
     return -1LL - static_cast<int64_t>(value_);
   }
   return 0LL;
 }
 
-uint8_t Reader::getSimpleValue() {
+uint8_t Reader::getSimpleValue() const {
   if (majorType_ == kSimpleOrFloat) {
     return static_cast<uint8_t>(value_);
   }
   return 0;
 }
 
-uint64_t Reader::getTag() {
+uint64_t Reader::getTag() const {
   if (majorType_ == kTag) {
     return value_;
   }

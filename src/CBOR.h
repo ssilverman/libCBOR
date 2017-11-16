@@ -78,18 +78,18 @@ class Reader {
   // number of bytes, and also to concatenate any definite-length portions
   // of an idefinite-length byte or text stream.
   //
-  // This follows the same contract as Serial.readBytes.
+  // This follows the same contract as Stream.readBytes.
   int readBytes(uint8_t *buffer, size_t length);
 
   // Returns the syntax error value if readDataType() returned
   // DataType::kSyntaxError.
-  SyntaxError getSyntaxError();
+  SyntaxError getSyntaxError() const;
 
   // Gets the raw value attached to the current data item. This will return
   // a length for bytes, text, arrays, and maps. For indefinite length data
   // items, this will return zero. For boolean, null, undefined, break, and
   // other simple values less than 32, this will return zero.
-  uint64_t getRawValue();
+  uint64_t getRawValue() const;
 
   // Determines if the current bytes, text, array, or map has an indefinite
   // length. The end will be determined by a data item of type
@@ -98,24 +98,38 @@ class Reader {
   // If this returns true, then the caller should keep track of nesting, and
   // true should be passed as the value for the allowBreak parameter in
   // readDataType the next time it is called.
-  bool isIndefiniteLength();
+  bool isIndefiniteLength() const;
 
   // Returns the length of bytes, text, arrays, or maps. For indefinite length
   // data items, this will return 0. For these types, please use the
   // isIndefiniteLength() function.
-  uint64_t getLength();
+  uint64_t getLength() const;
 
-  bool getBoolean();
-  float getFloat();
-  double getDouble();
-  uint64_t getUnsignedInt();
-  int64_t getInt();
+  // Returns the current boolean value, or false if the value isn't a boolean.
+  bool getBoolean() const;
+
+  // Returns the current single-precision float value, or 0.0f if the value
+  // isn't a single-precision float.
+  float getFloat() const;
+
+  // Returns the current double-precision float value, or 0.0 if the value
+  // isn't a double-precision float.
+  double getDouble() const;
+
+  // Returns the current unsigned int value, or 0 if the value isn't an
+  // unsigned int.
+  uint64_t getUnsignedInt() const;
+
+  // Returns the current negative int value, or 0 if the value isn't a
+  // negative int.
+  int64_t getInt() const;
 
   // Gets the simple value. Note that values < 32 are technically invalid.
   // Values: 20=False, 21=True, 22=Null, 23=Undefined, 24-31=Reserved.
-  uint8_t getSimpleValue();
+  uint8_t getSimpleValue() const;
 
-  uint64_t getTag();
+  // Returns the current tag value, or 0 if the value isn't a tag.
+  uint64_t getTag() const;
 
   // Checks if the next data item is well-formed. This includes any nested
   // items and advances the stream. A data item is considered not well-formed
