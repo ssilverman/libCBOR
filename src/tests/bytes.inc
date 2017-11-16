@@ -24,7 +24,7 @@ test(bytes_something) {
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kBytes));
   assertTrue(cbor.getLength() == 4);
   uint8_t b2[5]{0};
-  assertEqual(cbor.readBytes(b2, 4), 4);
+  assertEqual(cbor.readBytes(b2, 4), size_t{4});
   assertEqual(reinterpret_cast<char*>(&b2[0]), reinterpret_cast<char*>(&b[1]));
 }
 
@@ -40,10 +40,10 @@ test(bytes_indefinite) {
   uint8_t b2[6]{0};
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kBytes));
   assertTrue(cbor.getLength() == 2);
-  assertEqual(cbor.readBytes(&b2[0], 2), 2);
+  assertEqual(cbor.readBytes(&b2[0], 2), size_t{2});
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kBytes));
   assertTrue(cbor.getLength() == 3);
-  assertEqual(cbor.readBytes(&b2[2], 3), 3);
+  assertEqual(cbor.readBytes(&b2[2], 3), size_t{3});
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kBreak));
 
   uint8_t b3[] = { 0x01, 0x02, 0x03, 0x04, 0x05, 0 };
@@ -69,7 +69,7 @@ test(text_something) {
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kText));
   assertTrue(cbor.getLength() == 4);
   uint8_t b2[5]{0};
-  assertEqual(cbor.readBytes(b2, 4), 4);
+  assertEqual(cbor.readBytes(b2, 4), size_t{4});
   assertEqual(reinterpret_cast<char*>(&b2[0]), reinterpret_cast<char*>(&b[1]));
 }
 
@@ -85,10 +85,10 @@ test(text_indefinite) {
   uint8_t b2[10]{0};
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kText));
   assertTrue(cbor.getLength() == 5);
-  assertEqual(cbor.readBytes(&b2[0], 5), 5);
+  assertEqual(cbor.readBytes(&b2[0], 5), size_t{5});
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kText));
   assertTrue(cbor.getLength() == 4);
-  assertEqual(cbor.readBytes(&b2[5], 4), 4);
+  assertEqual(cbor.readBytes(&b2[5], 4), size_t{4});
 
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kBreak));
 

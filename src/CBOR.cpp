@@ -203,8 +203,12 @@ DataType Reader::readDataType() {
   return DataType::kEOS;
 }
 
-int Reader::readBytes(uint8_t *buffer, size_t length) {
+size_t Reader::readBytes(uint8_t *buffer, size_t length) {
   return in_.readBytes(buffer, length);
+}
+
+int Reader::readByte() {
+  return in_.read();
 }
 
 SyntaxError Reader::getSyntaxError() const {
@@ -693,7 +697,13 @@ void Writer::writeTag(uint64_t v) {
 }
 
 void Writer::writeBytes(const uint8_t *buffer, size_t length) {
+  // TODO: Should we return something here?
   out_.write(buffer, length);
+}
+
+void Writer::writeByte(uint8_t b) {
+  // TODO: Should we return something here?
+  out_.write(b);
 }
 
 void Writer::beginBytes(unsigned int length) {

@@ -63,6 +63,17 @@ class Reader {
         syntaxError_(SyntaxError::kNoError) {}
   ~Reader() = default;
 
+  // Returns any read error in the underlying Stream object. This will
+  // return zero if there is no error. An error may have occurred if
+  // readBytes returns zero.
+  int getReadError() {
+#ifndef ESP8266
+    return in_.getReadError();
+#else
+    return 0;
+#endif
+  }
+
   // Reads the data type of the next data item. This returns DataType::kEOS
   // if the end of stream has been reached. Otherwise, this guarantees that
   // all the bytes necessary for any attached value are available from the
@@ -76,10 +87,19 @@ class Reader {
 
   // Reads data for bytes or text. It is up to the caller to read the correct
   // number of bytes, and also to concatenate any definite-length portions
-  // of an idefinite-length byte or text stream.
+  // of an indefinite-length byte or text stream.
   //
-  // This follows the same contract as Stream.readBytes.
-  int readBytes(uint8_t *buffer, size_t length);
+  // This follows the same contract as Stream.readBytes. A read error will
+  // probably have been set if end-of-stream was reached.
+  size_t readBytes(uint8_t *buffer, size_t length);
+
+  // Reads data for bytes or text. It is up to the caller to read the correct
+  // number of bytes, and also to concatenate any definite-length portions
+  // of an indefinite-length byte or text stream.
+  //
+  // This follows the same contract as Stream.read(). This will return -1
+  // if end-of-stream was reached.
+  int readByte();
 
   // Returns the syntax error value if readDataType() returned
   // DataType::kSyntaxError.
@@ -205,6 +225,10 @@ class Writer {
   // write enough bytes so that the total size matches the length given
   // in beginBytes or beginText.
   void writeBytes(const uint8_t *buffer, size_t length);
+
+  // Writes a single byte to the output. See the docs for writeBytes for
+  // more information.
+  void writeByte(uint8_t b);
 
   // Starts a byte string having a specific length. It is up to the caller
   // to write the correct total number of bytes.
