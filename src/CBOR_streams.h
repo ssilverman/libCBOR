@@ -52,6 +52,12 @@ class BytesStream : public Stream {
     waiting_ = waitStates_;
   }
 
+  // Returns the current index into the byte array. This indicates how many
+  // bytes were read.
+  size_t getIndex() const {
+    return index_;
+  }
+
  private:
   const uint8_t *b_;
   size_t length_;
@@ -82,6 +88,12 @@ class BytesPrint : public Print {
   // Resets the stream back to the beginning.
   void reset() {
     index_ = 0;
+  }
+
+  // Returns the current index into the byte array. This indicates how many
+  // bytes were written.
+  size_t getIndex() const {
+    return index_;
   }
 
  private:
@@ -125,6 +137,11 @@ class EEPROMStream : public Stream {
     address_ = start_;
   }
 
+  // Returns the current address. This indicates how many bytes were read.
+  int getAddress() const {
+    return address_;
+  }
+
  private:
   const size_t size_;
   int start_;
@@ -159,6 +176,11 @@ class EEPROMPrint : public Print {
   // Resets the stream back to the beginning.
   void reset() {
     address_ = start_;
+  }
+
+  // Returns the current address. This indicates how many bytes were written.
+  int getAddress() const {
+    return address_;
   }
 
  private:
