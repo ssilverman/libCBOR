@@ -145,8 +145,9 @@ class Reader {
   // negative int.
   int64_t getInt() const;
 
-  // Gets the simple value. Note that values < 32 are technically invalid.
-  // Values: 20=False, 21=True, 22=Null, 23=Undefined, 24-31=Reserved.
+  // Gets the simple value. Note that values < 32 are technically invalid,
+  // even though they are well-formed. Values: 20=False, 21=True, 22=Null,
+  // 23=Undefined, 24-31=Reserved.
   uint8_t getSimpleValue() const;
 
   // Returns the current tag value, or 0 if the value isn't a tag.
