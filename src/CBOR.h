@@ -60,7 +60,8 @@ class Reader {
         addlInfo_(0),
         waitAvailable_(0),
         value_(0),
-        syntaxError_(SyntaxError::kNoError) {}
+        syntaxError_(SyntaxError::kNoError),
+        readSize_(0) {}
   ~Reader() = default;
 
   // Returns any read error in the underlying Stream object. This will
@@ -159,7 +160,18 @@ class Reader {
   //
   // This calls yield() at the end of the function if the processor is
   // an ESP8266.
+  //
+  // This advances the read size. See getReadSize().
   bool isWellFormed();
+
+  // Returns the number of bytes available in the underlying stream. This
+  // follows the same contract as Stream.available().
+  int available();
+
+  // Gets the number of bytes read so far.
+  size_t getReadSize() const {
+    return readSize_;
+  }
 
  private:
   enum class State {
@@ -192,13 +204,20 @@ class Reader {
   int waitAvailable_;
   uint64_t value_;  // The simple or non-simple value after the major type
   SyntaxError syntaxError_;
+
+  size_t readSize_;
 };
 
 // Writer provides a way to encode data to a CBOR-encoded stream. Callers
-// need to manage proper structure themselves.
+// need to manage proper structure themselves. If there was an error writing
+// anything to the Print stream then the write error will probably be set
+// (depending on the Print implementation).
 class Writer {
  public:
-  Writer(Print &out) : out_(out) {}
+  Writer(Print &out)
+      : out_(out),
+        writeSize_(0) {}
+
   ~Writer() = default;
 
   // Returns any write error in the underlying Print object. This will
@@ -224,7 +243,9 @@ class Writer {
   // beginBytes or beginText was called, then it is up to the caller to
   // write enough bytes so that the total size matches the length given
   // in beginBytes or beginText.
-  void writeBytes(const uint8_t *buffer, size_t length);
+  //
+  // This returns the number of byts actually written.
+  size_t writeBytes(const uint8_t *buffer, size_t length);
 
   // Writes a single byte to the output. See the docs for writeBytes for
   // more information.
@@ -280,12 +301,19 @@ class Writer {
   // Ends an indefinite stream of bytes, text, array elements, or map pairs.
   void endIndefinite();
 
+  // Gets the number of bytes written so far.
+  size_t getWriteSize() const {
+    return writeSize_;
+  }
+
  private:
   // Writes an int having the given major type, either 0x20 (signed)
   // or 0x00 (unsigned).
   void writeTypedInt(uint8_t mt, uint64_t u);
 
   Print &out_;
+
+  size_t writeSize_;
 };
 
 }  // namespace cbor
