@@ -50,7 +50,7 @@ enum class SyntaxError {
 //
 // If any of the getXXX() functions are called and the type does not match,
 // then a default value of zero or false is returned.
-class Reader {
+class Reader : public Stream {
  public:
   Reader(Stream &in)
       : state_(State::kStart),
@@ -90,7 +90,7 @@ class Reader {
   // number of bytes, and also to concatenate any definite-length portions
   // of an indefinite-length byte or text stream.
   //
-  // This follows the same contract as Stream.readBytes. A read error will
+  // This follows the same contract as Stream::readBytes. The read error will
   // probably have been set if end-of-stream was reached.
   size_t readBytes(uint8_t *buffer, size_t length);
 
@@ -98,7 +98,7 @@ class Reader {
   // number of bytes, and also to concatenate any definite-length portions
   // of an indefinite-length byte or text stream.
   //
-  // This follows the same contract as Stream.read(). This will return -1
+  // This follows the same contract as Stream::read(). This will return -1
   // if end-of-stream was reached.
   int readByte();
 
@@ -165,13 +165,40 @@ class Reader {
   // This advances the read size. See getReadSize().
   bool isWellFormed();
 
-  // Returns the number of bytes available in the underlying stream. This
-  // follows the same contract as Stream.available().
-  int available();
-
   // Gets the number of bytes read so far.
   size_t getReadSize() const {
     return readSize_;
+  }
+
+  // Returns the number of bytes available in the underlying stream. This
+  // follows the same contract as Stream::available().
+  int available() override {
+    return in_.available();
+  }
+
+  // Returns a byte and increments the read size if end-of-stream was
+  // not reached. This follows the same contract as Stream::read().
+  int read() override {
+    int b = in_.read();
+    if (b >= 0) {
+      readSize_++;
+    }
+    return b;
+  }
+
+  // Peeks at the next byte. This follows the same contract as Stream::peek().
+  int peek() override {
+    return in_.peek();
+  }
+
+  // Does nothing and returns zero. This is only here to satisfy the
+  // Stream interface.
+  size_t write(uint8_t b) final {
+    return 0;
+  }
+
+  // Does nothing. This is only here to satisfy the Stream interface.
+  void flush() final {
   }
 
  private:
@@ -211,9 +238,11 @@ class Reader {
 
 // Writer provides a way to encode data to a CBOR-encoded stream. Callers
 // need to manage proper structure themselves. If there was an error writing
-// anything to the Print stream then the write error will probably be set
+// anything to the Print stream then the write error might be set
 // (depending on the Print implementation).
-class Writer {
+//
+// This sets the write error on any short writes.
+class Writer : public Print {
  public:
   Writer(Print &out)
       : out_(out),
@@ -245,11 +274,14 @@ class Writer {
   // write enough bytes so that the total size matches the length given
   // in beginBytes or beginText.
   //
-  // This returns the number of byts actually written.
-  size_t writeBytes(const uint8_t *buffer, size_t length);
+  // This returns the number of bytes actually written. For short writes,
+  // the write error will be set.
+  void writeBytes(const uint8_t *buffer, size_t length);
 
   // Writes a single byte to the output. See the docs for writeBytes for
   // more information.
+  //
+  // The write error will be set for short writes.
   void writeByte(uint8_t b);
 
   // Starts a byte string having a specific length. It is up to the caller
@@ -306,6 +338,43 @@ class Writer {
   size_t getWriteSize() const {
     return writeSize_;
   }
+
+  // Writes a byte and returns 1 if the write was successful, and zero
+  // otherwise. This follows the same contract as Print::write(uint8_t).
+  //
+  // If the write is unsuccessful then this will set the write error.
+  size_t write(uint8_t b) override {
+    if (out_.write(b) == 0) {
+      setWriteError();
+      return 0;
+    }
+    writeSize_++;
+    return 1;
+  }
+
+  // Writes bytes and returns the number of bytes successfully written.
+  // This follows the same contract as Print::write(const uint8_t*, size_t).
+  //
+  // If the number of successful bytes written is less than the given size
+  // then this will set the write error.
+  size_t write(const uint8_t *buffer, size_t size) override {
+    size_t written = out_.write(buffer, size);
+    if (written < size) {
+      setWriteError();
+    }
+    writeSize_ += written;
+    return written;
+  }
+
+#ifndef ESP8266
+  void flush() override {
+    out_.flush();
+  }
+#else
+  void flush() {
+    // Print does not have flush() in ESP8266
+  }
+#endif
 
  private:
   // Writes an int having the given major type, either 0x20 (signed)

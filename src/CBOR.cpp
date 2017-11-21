@@ -33,14 +33,13 @@ DataType Reader::readDataType() {
     // Initialize everything to a default
     value_ = 0;
     syntaxError_ = SyntaxError::kNoError;
-    initialByte_ = in_.read();
+    initialByte_ = read();
     if (initialByte_ < 0) {
       majorType_ = 0;
       addlInfo_ = 0;
       waitAvailable_ = 0;
       return DataType::kEOS;
     }
-    readSize_++;
     majorType_ = static_cast<uint8_t>(initialByte_) >> 5;
     addlInfo_ = initialByte_ & 0x1f;
     state_ = State::kAdditionalInfo;
@@ -91,7 +90,7 @@ DataType Reader::readDataType() {
 
   // If we need to, wait for any available bytes
   if (state_ == State::kWaitAvailable) {
-    if (in_.available() < waitAvailable_) {
+    if (available() < waitAvailable_) {
       return DataType::kEOS;
     }
     state_ = State::kReadValue;
@@ -101,34 +100,30 @@ DataType Reader::readDataType() {
   if (state_ == State::kReadValue) {
     switch (addlInfo_) {
       case 24:
-        value_ = in_.read();
-        readSize_++;
+        value_ = read();
         break;
       case 25:
         value_ =
-            (static_cast<uint16_t>(in_.read()) << 8) |
-            (static_cast<uint16_t>(in_.read()));
-        readSize_ += 2;
+            (static_cast<uint16_t>(read()) << 8) |
+            (static_cast<uint16_t>(read()));
         break;
       case 26:
         value_ =
-            (static_cast<uint32_t>(in_.read()) << 24) |
-            (static_cast<uint32_t>(in_.read()) << 16) |
-            (static_cast<uint32_t>(in_.read()) << 8) |
-            (static_cast<uint32_t>(in_.read()));
-        readSize_ += 4;
+            (static_cast<uint32_t>(read()) << 24) |
+            (static_cast<uint32_t>(read()) << 16) |
+            (static_cast<uint32_t>(read()) << 8) |
+            (static_cast<uint32_t>(read()));
         break;
       case 27:
         value_ =
-            (static_cast<uint64_t>(in_.read()) << 56) |
-            (static_cast<uint64_t>(in_.read()) << 48) |
-            (static_cast<uint64_t>(in_.read()) << 40) |
-            (static_cast<uint64_t>(in_.read()) << 32) |
-            (static_cast<uint64_t>(in_.read()) << 24) |
-            (static_cast<uint64_t>(in_.read()) << 16) |
-            (static_cast<uint64_t>(in_.read()) << 8) |
-            (static_cast<uint64_t>(in_.read()));
-        readSize_ += 8;
+            (static_cast<uint64_t>(read()) << 56) |
+            (static_cast<uint64_t>(read()) << 48) |
+            (static_cast<uint64_t>(read()) << 40) |
+            (static_cast<uint64_t>(read()) << 32) |
+            (static_cast<uint64_t>(read()) << 24) |
+            (static_cast<uint64_t>(read()) << 16) |
+            (static_cast<uint64_t>(read()) << 8) |
+            (static_cast<uint64_t>(read()));
         break;
       case 28:
       case 29:
@@ -214,16 +209,8 @@ size_t Reader::readBytes(uint8_t *buffer, size_t length) {
   return read;
 }
 
-int Reader::available() {
-  return in_.available();
-}
-
 int Reader::readByte() {
-  int b = in_.read();
-  if (b >= 0) {
-    readSize_++;
-  }
-  return b;
+  return read();
 }
 
 SyntaxError Reader::getSyntaxError() const {
@@ -387,21 +374,19 @@ bool Reader::isWellFormed() {
 }
 
 int Reader::isWellFormed(bool breakable) {
-  int ib = in_.read();  // Initial byte
+  int ib = read();  // Initial byte
   if (ib < 0) {
     return -1;
   }
-  readSize_++;
   uint8_t majorType = static_cast<uint8_t>(ib) >> 5;
   uint8_t ai = ib & 0x1f;  // Additional information
   uint64_t val;
   switch (ai) {
     case 24:
-      if (in_.available() < 1) {
+      if (available() < 1) {
         return -1;
       }
-      val = static_cast<uint8_t>(in_.read());
-      readSize_++;
+      val = static_cast<uint8_t>(read());
       // Simple types having a 1-byte value < 32 are well-formed but
       // technically invalid, so don't do the following check:
       // if (majorType == kSimpleOrFloat && val < 32) {
@@ -409,39 +394,36 @@ int Reader::isWellFormed(bool breakable) {
       // }
       break;
     case 25:
-      if (in_.available() < 2) {
+      if (available() < 2) {
         return -1;
       }
       val =
-          (static_cast<uint16_t>(in_.read()) << 8) |
-          (static_cast<uint16_t>(in_.read()));
-      readSize_ += 2;
+          (static_cast<uint16_t>(read()) << 8) |
+          (static_cast<uint16_t>(read()));
       break;
     case 26:
-      if (in_.available() < 4) {
+      if (available() < 4) {
         return -1;
       }
       val =
-          (static_cast<uint32_t>(in_.read()) << 24) |
-          (static_cast<uint32_t>(in_.read()) << 16) |
-          (static_cast<uint32_t>(in_.read()) << 8) |
-          (static_cast<uint32_t>(in_.read()));
-      readSize_ += 4;
+          (static_cast<uint32_t>(read()) << 24) |
+          (static_cast<uint32_t>(read()) << 16) |
+          (static_cast<uint32_t>(read()) << 8) |
+          (static_cast<uint32_t>(read()));
       break;
     case 27:
-      if (in_.available() < 8) {
+      if (available() < 8) {
         return -1;
       }
       val =
-          (static_cast<uint64_t>(in_.read()) << 56) |
-          (static_cast<uint64_t>(in_.read()) << 48) |
-          (static_cast<uint64_t>(in_.read()) << 40) |
-          (static_cast<uint64_t>(in_.read()) << 32) |
-          (static_cast<uint64_t>(in_.read()) << 24) |
-          (static_cast<uint64_t>(in_.read()) << 16) |
-          (static_cast<uint64_t>(in_.read()) << 8) |
-          (static_cast<uint64_t>(in_.read()));
-      readSize_ += 8;
+          (static_cast<uint64_t>(read()) << 56) |
+          (static_cast<uint64_t>(read()) << 48) |
+          (static_cast<uint64_t>(read()) << 40) |
+          (static_cast<uint64_t>(read()) << 32) |
+          (static_cast<uint64_t>(read()) << 24) |
+          (static_cast<uint64_t>(read()) << 16) |
+          (static_cast<uint64_t>(read()) << 8) |
+          (static_cast<uint64_t>(read()));
       break;
     case 28: case 29: case 30:
       return -1;
@@ -457,17 +439,15 @@ int Reader::isWellFormed(bool breakable) {
     case 3:  // Text string (UTF-8)
       if (val <= UINT32_MAX) {
         for (uint32_t i = 0, max = static_cast<uint32_t>(val); i < max; i++) {
-          if (in_.read() < 0) {
+          if (read() < 0) {
             return -1;
           }
-          readSize_++;
         }
       } else {
         for (uint64_t i = 0; i < val; i++) {
-          if (in_.read() < 0) {
+          if (read() < 0) {
             return -1;
           }
-          readSize_++;
         }
       }
       break;
@@ -566,17 +546,13 @@ int Reader::isIndefiniteWellFormed(uint8_t majorType, bool breakable) {
 // ***************************************************************************
 
 void Writer::writeBoolean(bool b) {
-  if (out_.write((kSimpleOrFloat << 5) + (b ? 21 : 20)) == 0) {
-    return;
-  }
-  writeSize_++;
+  write((kSimpleOrFloat << 5) + (b ? 21 : 20));
 }
 
 void Writer::writeFloat(float f) {
-  if (out_.write((kSimpleOrFloat << 5) + 26) == 0) {
+  if (write((kSimpleOrFloat << 5) + 26) == 0) {
     return;
   }
-  writeSize_++;
 
   // constexpr int kBitsM = 23;
   // constexpr int kBitsE = 8;
@@ -610,29 +586,22 @@ void Writer::writeFloat(float f) {
   //   val |= (1UL << 31);
   // }
 
-  if (out_.write(val >> 24) == 0) {
+  if (write(val >> 24) == 0) {
     return;
   }
-  writeSize_++;
-  if (out_.write(val >> 16) == 0) {
+  if (write(val >> 16) == 0) {
     return;
   }
-  writeSize_++;
-  if (out_.write(val >> 8) == 0) {
+  if (write(val >> 8) == 0) {
     return;
   }
-  writeSize_++;
-  if (out_.write(val) == 0) {
-    return;
-  }
-  writeSize_++;
+  write(val);
 }
 
 void Writer::writeDouble(double d) {
-  if (out_.write((kSimpleOrFloat << 5) + 27) == 0) {
+  if (write((kSimpleOrFloat << 5) + 27) == 0) {
     return;
   }
-  writeSize_++;
 
   // constexpr int kBitsM = 52;
   // constexpr int kBitsE = 11;
@@ -666,38 +635,28 @@ void Writer::writeDouble(double d) {
   //   val |= (1ULL << 63);
   // }
 
-  if (out_.write(val >> 56) == 0) {
+  if (write(val >> 56) == 0) {
     return;
   }
-  writeSize_++;
-  if (out_.write(val >> 48) == 0) {
+  if (write(val >> 48) == 0) {
     return;
   }
-  writeSize_++;
-  if (out_.write(val >> 40) == 0) {
+  if (write(val >> 40) == 0) {
     return;
   }
-  writeSize_++;
-  if (out_.write(val >> 32) == 0) {
+  if (write(val >> 32) == 0) {
     return;
   }
-  writeSize_++;
-  if (out_.write(val >> 24) == 0) {
+  if (write(val >> 24) == 0) {
     return;
   }
-  writeSize_++;
-  if (out_.write(val >> 16) == 0) {
+  if (write(val >> 16) == 0) {
     return;
   }
-  writeSize_++;
-  if (out_.write(val >> 8) == 0) {
+  if (write(val >> 8) == 0) {
     return;
   }
-  writeSize_++;
-  if (out_.write(val) == 0) {
-    return;
-  }
-  writeSize_++;
+  write(val);
 }
 
 void Writer::writeUnsignedInt(uint64_t u) {
@@ -713,122 +672,79 @@ void Writer::writeInt(int64_t i) {
 
 void Writer::writeTypedInt(uint8_t mt, uint64_t u) {
   if (u < 24) {
-    if (out_.write(mt + u) == 0) {
-      return;
-    }
-    writeSize_++;
+    write(mt + u);
   } else if (u < (1 << 8)) {
-    if (out_.write(mt + 24) == 0) {
+    if (write(mt + 24) == 0) {
       return;
     }
-    writeSize_++;
-    if (out_.write(u) == 0) {
-      return;
-    }
-    writeSize_++;
+    write(u);
   } else if (u < (1UL << 16)) {
-    if (out_.write(mt + 25) == 0) {
+    if (write(mt + 25) == 0) {
       return;
     }
-    writeSize_++;
-    if (out_.write(u >> 8) == 0) {
+    if (write(u >> 8) == 0) {
       return;
     }
-    writeSize_++;
-    if (out_.write(u) == 0) {
-      return;
-    }
-    writeSize_++;
+    write(u);
   } else if (u < (1ULL << 32)) {
-    if (out_.write(mt + 26) == 0) {
+    if (write(mt + 26) == 0) {
       return;
     }
-    writeSize_++;
-    if (out_.write(u >> 24) == 0) {
+    if (write(u >> 24) == 0) {
       return;
     }
-    writeSize_++;
-    if (out_.write(u >> 16) == 0) {
+    if (write(u >> 16) == 0) {
       return;
     }
-    writeSize_++;
-    if (out_.write(u >> 8) == 0) {
+    if (write(u >> 8) == 0) {
       return;
     }
-    writeSize_++;
-    if (out_.write(u) == 0) {
-      return;
-    }
-    writeSize_++;
+    write(u);
   } else {
-    if (out_.write(mt + 27) == 0) {
+    if (write(mt + 27) == 0) {
       return;
     }
-    writeSize_++;
-    if (out_.write(u >> 56) == 0) {
+    if (write(u >> 56) == 0) {
       return;
     }
-    writeSize_++;
-    if (out_.write(u >> 48) == 0) {
+    if (write(u >> 48) == 0) {
       return;
     }
-    writeSize_++;
-    if (out_.write(u >> 40) == 0) {
+    if (write(u >> 40) == 0) {
       return;
     }
-    writeSize_++;
-    if (out_.write(u >> 32) == 0) {
+    if (write(u >> 32) == 0) {
       return;
     }
-    writeSize_++;
-    if (out_.write(u >> 24) == 0) {
+    if (write(u >> 24) == 0) {
       return;
     }
-    writeSize_++;
-    if (out_.write(u >> 16) == 0) {
+    if (write(u >> 16) == 0) {
       return;
     }
-    writeSize_++;
-    if (out_.write(u >> 8) == 0) {
+    if (write(u >> 8) == 0) {
       return;
     }
-    writeSize_++;
-    if (out_.write(u) == 0) {
-      return;
-    }
-    writeSize_++;
+    write(u);
   }
 }
 
 void Writer::writeNull() {
-  if (out_.write((kSimpleOrFloat << 5) + 22) == 0) {
-    return;
-  }
-  writeSize_++;
+  write((kSimpleOrFloat << 5) + 22);
 }
 
 void Writer::writeUndefined() {
-  if (out_.write((kSimpleOrFloat << 5) + 23) == 0) {
-    return;
-  }
-  writeSize_++;
+  write((kSimpleOrFloat << 5) + 23);
 }
 
 void Writer::writeSimpleValue(uint8_t v) {
   if (v < 24) {
-    if (out_.write((kSimpleOrFloat << 5) + v) == 0) {
-      return;
-    }
-    writeSize_++;
+    write((kSimpleOrFloat << 5) + v);
   } else {
-    if (out_.write((kSimpleOrFloat << 5) + 24) == 0) {
+    if (write((kSimpleOrFloat << 5) + 24) == 0) {
       return;
     }
-    writeSize_++;
-    if (out_.write(v) == 0) {
-        return;
-    }
-    writeSize_++;
+    write(v);
   }
 }
 
@@ -836,17 +752,12 @@ void Writer::writeTag(uint64_t v) {
   writeTypedInt(kTag << 5, v);
 }
 
-size_t Writer::writeBytes(const uint8_t *buffer, size_t length) {
-  size_t written = out_.write(buffer, length);
-  writeSize_ += written;
-  return written;
+void Writer::writeBytes(const uint8_t *buffer, size_t length) {
+  write(buffer, length);
 }
 
 void Writer::writeByte(uint8_t b) {
-  if (out_.write(b) == 0) {
-    return;
-  }
-  writeSize_++;
+  write(b);
 }
 
 void Writer::beginBytes(unsigned int length) {
@@ -858,17 +769,11 @@ void Writer::beginText(unsigned int length) {
 }
 
 void Writer::beginIndefiniteBytes() {
-  if (out_.write((kBytes << 5) + 31) == 0) {
-    return;
-  }
-  writeSize_++;
+  write((kBytes << 5) + 31);
 }
 
 void Writer::beginIndefiniteText() {
-  if (out_.write((kText << 5) + 31) == 0) {
-    return;
-  }
-  writeSize_++;
+  write((kText << 5) + 31);
 }
 
 void Writer::beginArray(unsigned int length) {
@@ -880,24 +785,15 @@ void Writer::beginMap(unsigned int length) {
 }
 
 void Writer::beginIndefiniteArray() {
-  if (out_.write((kArray << 5) + 31) == 0) {
-    return;
-  }
-  writeSize_++;
+  write((kArray << 5) + 31);
 }
 
 void Writer::beginIndefiniteMap() {
-  if (out_.write((kMap << 5) + 31) == 0) {
-    return;
-  }
-  writeSize_++;
+  write((kMap << 5) + 31);
 }
 
 void Writer::endIndefinite() {
-  if (out_.write((kSimpleOrFloat << 5) + 31) == 0) {
-    return;
-  }
-  writeSize_++;
+  write((kSimpleOrFloat << 5) + 31);
 }
 
 // // Forward declarations
