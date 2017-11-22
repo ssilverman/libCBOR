@@ -214,8 +214,10 @@ class Reader : public Stream {
   // on success, -1 on error, and -2 on encountering a break value. The
   // breakable parameter indicates whether we should allow the break value.
   // If it's disallowed then this will return -1 if a break value is
-  // encountered. When first called breakable should be set to false.
-  int isWellFormed(bool breakable);
+  // encountered. When first called, breakable should be set to false.
+  //
+  // The initialByte argument is the value of the next read.
+  int isWellFormed(int initialByte, bool breakable);
 
   // Checks if an indefinite-length item is well-formed. This returns the
   // major type on success, -1 on error, and -2 on encountering a break

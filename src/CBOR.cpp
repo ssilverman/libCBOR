@@ -366,20 +366,19 @@ uint64_t Reader::getTag() const {
 // ***************************************************************************
 
 bool Reader::isWellFormed() {
-  bool retval = (isWellFormed(false) >= 0);
+  bool retval = (isWellFormed(read(), false) >= 0);
 #ifdef ESP8266
   yield();
 #endif
   return retval;
 }
 
-int Reader::isWellFormed(bool breakable) {
-  int ib = read();  // Initial byte
-  if (ib < 0) {
+int Reader::isWellFormed(int initialByte, bool breakable) {
+  if (initialByte < 0) {
     return -1;
   }
-  uint8_t majorType = static_cast<uint8_t>(ib) >> 5;
-  uint8_t ai = ib & 0x1f;  // Additional information
+  uint8_t majorType = static_cast<uint8_t>(initialByte) >> 5;
+  uint8_t ai = initialByte & 0x1f;  // Additional information
   uint64_t val;
   switch (ai) {
     case 24:
@@ -461,20 +460,20 @@ int Reader::isWellFormed(bool breakable) {
     case 4:  // Array
       if (val <= UINT32_MAX) {
         for (uint32_t i = 0, max = static_cast<uint32_t>(val); i < max; i++) {
-          if (isWellFormed(false) < 0) {
+          if (isWellFormed(read(), false) < 0) {
             return -1;
           }
         }
       } else {
         for (uint64_t i = 0; i < val; i++) {
-          if (isWellFormed(false) < 0) {
+          if (isWellFormed(read(), false) < 0) {
             return -1;
           }
         }
       }
       break;
     case 6:
-      if (isWellFormed(false) < 0) {
+      if (isWellFormed(read(), false) < 0) {
         return -1;
       }
       break;
@@ -491,21 +490,35 @@ int Reader::isIndefiniteWellFormed(uint8_t majorType, bool breakable) {
     case kBytes:
     case kText:
       while (true) {
-        int t = isWellFormed(true);
+        int ib = read();  // Initial byte
+        if (ib < 0) {
+          return -1;
+        }
+
+        // The only case we allow the major type to not match is a break
+        if (ib == (kSimpleOrFloat << 5) + 31) {
+          break;
+        }
+
+        // Now short-circuit to exit if the major type doesn't match
+        uint8_t mt = static_cast<uint8_t>(ib) >> 5;  // Major type
+        if (mt != majorType) {
+          return -1;
+        }
+
+        int t = isWellFormed(ib, true);
         if (t == -2) {  // Break
+          // NOTE: This case shouldn't happen because of the Break check above
           break;
         }
         if (t == -1) {  // Malformed
-          return -1;
-        }
-        if (t != majorType) {
           return -1;
         }
       }
       break;
     case kArray:
       while (true) {
-        int t = isWellFormed(true);
+        int t = isWellFormed(read(), true);
         if (t == -2) {  // Break
           break;
         }
@@ -516,14 +529,14 @@ int Reader::isIndefiniteWellFormed(uint8_t majorType, bool breakable) {
       break;
     case kMap:
       while (true) {
-        int t = isWellFormed(true);
+        int t = isWellFormed(read(), true);
         if (t == -2) {  // Break
           break;
         }
         if (t == -1) {  // Malformed
           return -1;
         }
-        if (isWellFormed(false) < 0) {
+        if (isWellFormed(read(), false) < 0) {
           return -1;
         }
       }
