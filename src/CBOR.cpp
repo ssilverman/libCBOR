@@ -501,8 +501,9 @@ int Reader::isIndefiniteWellFormed(uint8_t majorType, bool breakable) {
         }
 
         // Now short-circuit to exit if the major type doesn't match
+        // or if there's a nested indefinite-length situation
         uint8_t mt = static_cast<uint8_t>(ib) >> 5;  // Major type
-        if (mt != majorType) {
+        if (mt != majorType || (ib & 0x1f) == 31) {
           return -1;
         }
 
