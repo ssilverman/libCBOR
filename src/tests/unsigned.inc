@@ -10,9 +10,11 @@ test(unsigned_zero) {
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cbor{bs};
   assertTrue(cbor.isWellFormed());
+  assertEqual(cbor.getReadSize(), size_t{1});
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kUnsignedInt));
   assertTrue(cbor.getUnsignedInt() == 0);
+  assertEqual(cbor.getReadSize(), size_t{2});
 }
 
 test(unsigned_19) {
@@ -20,9 +22,11 @@ test(unsigned_19) {
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cbor{bs};
   assertTrue(cbor.isWellFormed());
+  assertEqual(cbor.getReadSize(), size_t{1});
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kUnsignedInt));
   assertTrue(cbor.getUnsignedInt() == 19);
+  assertEqual(cbor.getReadSize(), size_t{2});
 }
 
 test(unsigned_23) {
@@ -30,9 +34,11 @@ test(unsigned_23) {
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cbor{bs};
   assertTrue(cbor.isWellFormed());
+  assertEqual(cbor.getReadSize(), size_t{1});
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kUnsignedInt));
   assertTrue(cbor.getUnsignedInt() == 23);
+  assertEqual(cbor.getReadSize(), size_t{2});
 }
 
 test(unsigned_1_byte) {
@@ -40,9 +46,11 @@ test(unsigned_1_byte) {
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cbor{bs};
   assertTrue(cbor.isWellFormed());
+  assertEqual(cbor.getReadSize(), size_t{2});
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kUnsignedInt));
   assertTrue(cbor.getUnsignedInt() == 0x12);
+  assertEqual(cbor.getReadSize(), size_t{4});
 }
 
 test(unsigned_2_bytes) {
@@ -50,9 +58,11 @@ test(unsigned_2_bytes) {
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cbor{bs};
   assertTrue(cbor.isWellFormed());
+  assertEqual(cbor.getReadSize(), size_t{3});
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kUnsignedInt));
   assertTrue(cbor.getUnsignedInt() == 0x1234);
+  assertEqual(cbor.getReadSize(), size_t{6});
 }
 
 test(unsigned_4_bytes) {
@@ -60,9 +70,11 @@ test(unsigned_4_bytes) {
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cbor{bs};
   assertTrue(cbor.isWellFormed());
+  assertEqual(cbor.getReadSize(), size_t{5});
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kUnsignedInt));
   assertTrue(cbor.getUnsignedInt() == 0x12345678UL);
+  assertEqual(cbor.getReadSize(), size_t{10});
 }
 
 test(unsigned_8_bytes) {
@@ -70,7 +82,9 @@ test(unsigned_8_bytes) {
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cbor{bs};
   assertTrue(cbor.isWellFormed());
+  assertEqual(cbor.getReadSize(), size_t{9});
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kUnsignedInt));
   assertTrue(cbor.getUnsignedInt() == 0x123456789abcdef0ULL);
+  assertEqual(cbor.getReadSize(), size_t{18});
 }

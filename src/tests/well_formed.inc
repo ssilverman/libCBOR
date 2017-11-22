@@ -10,6 +10,7 @@ test(well_formed_empty) {
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cbor{bs};
   assertFalse(cbor.isWellFormed());
+  assertEqual(cbor.getReadSize(), size_t{0});
 }
 
 test(well_formed_incomplete_1_byte) {
@@ -19,6 +20,7 @@ test(well_formed_incomplete_1_byte) {
     cbor::BytesStream bs{b, sizeof(b)};
     cbor::Reader cbor{bs};
     assertFalse(cbor.isWellFormed());
+    assertEqual(cbor.getReadSize(), size_t{1});
   }
 }
 
@@ -29,6 +31,7 @@ test(well_formed_incomplete_2_bytes) {
     cbor::BytesStream bs{b, sizeof(b)};
     cbor::Reader cbor{bs};
     assertFalse(cbor.isWellFormed());
+    assertEqual(cbor.getReadSize(), size_t{1});
   }
 }
 
@@ -39,6 +42,7 @@ test(well_formed_incomplete_4_bytes) {
     cbor::BytesStream bs{b, sizeof(b)};
     cbor::Reader cbor{bs};
     assertFalse(cbor.isWellFormed());
+    assertEqual(cbor.getReadSize(), size_t{1});
   }
 }
 
@@ -49,6 +53,7 @@ test(well_formed_incomplete_8_bytes) {
     cbor::BytesStream bs{b, sizeof(b)};
     cbor::Reader cbor{bs};
     assertFalse(cbor.isWellFormed());
+    assertEqual(cbor.getReadSize(), size_t{1});
   }
 }
 
@@ -60,6 +65,7 @@ test(well_formed_bad_additional_info) {
       cbor::BytesStream bs{b, sizeof(b)};
       cbor::Reader cbor{bs};
       assertFalse(cbor.isWellFormed());
+      assertEqual(cbor.getReadSize(), size_t{1});
     }
   }
 }
@@ -69,6 +75,7 @@ test(well_formed_missing_tagged_item) {
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cbor{bs};
   assertFalse(cbor.isWellFormed());
+  assertEqual(cbor.getReadSize(), size_t{3});
 }
 
 test(well_formed_bytes_too_short) {
@@ -76,6 +83,7 @@ test(well_formed_bytes_too_short) {
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cbor{bs};
   assertFalse(cbor.isWellFormed());
+  assertEqual(cbor.getReadSize(), size_t{3});
 }
 
 test(well_formed_bytes_indefinite_too_short) {
@@ -83,6 +91,7 @@ test(well_formed_bytes_indefinite_too_short) {
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cbor{bs};
   assertFalse(cbor.isWellFormed());
+  assertEqual(cbor.getReadSize(), size_t{4});
 }
 
 test(well_formed_bytes_indefinite_bad_type) {
@@ -90,6 +99,7 @@ test(well_formed_bytes_indefinite_bad_type) {
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cbor{bs};
   assertFalse(cbor.isWellFormed());
+  assertEqual(cbor.getReadSize(), size_t{2});
 }
 
 test(well_formed_text_too_short) {
@@ -97,6 +107,7 @@ test(well_formed_text_too_short) {
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cbor{bs};
   assertFalse(cbor.isWellFormed());
+  assertEqual(cbor.getReadSize(), size_t{3});
 }
 
 test(well_formed_text_indefinite_too_short) {
@@ -104,6 +115,7 @@ test(well_formed_text_indefinite_too_short) {
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cbor{bs};
   assertFalse(cbor.isWellFormed());
+  assertEqual(cbor.getReadSize(), size_t{4});
 }
 
 test(well_formed_text_indefinite_bad_type) {
@@ -111,6 +123,7 @@ test(well_formed_text_indefinite_bad_type) {
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cbor{bs};
   assertFalse(cbor.isWellFormed());
+  assertEqual(cbor.getReadSize(), size_t{2});
 }
 
 test(well_formed_array_too_short) {
@@ -118,6 +131,7 @@ test(well_formed_array_too_short) {
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cbor{bs};
   assertFalse(cbor.isWellFormed());
+  assertEqual(cbor.getReadSize(), size_t{3});
 }
 
 test(well_formed_map_too_short_complete_pair) {
@@ -125,6 +139,7 @@ test(well_formed_map_too_short_complete_pair) {
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cbor{bs};
   assertFalse(cbor.isWellFormed());
+  assertEqual(cbor.getReadSize(), size_t{5});
 }
 
 test(well_formed_map_too_short_incomplete_pair) {
@@ -132,6 +147,7 @@ test(well_formed_map_too_short_incomplete_pair) {
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cbor{bs};
   assertFalse(cbor.isWellFormed());
+  assertEqual(cbor.getReadSize(), size_t{6});
 }
 
 test(well_formed_lone_break) {
@@ -139,4 +155,5 @@ test(well_formed_lone_break) {
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cbor{bs};
   assertFalse(cbor.isWellFormed());
+  assertEqual(cbor.getReadSize(), size_t{1});
 }

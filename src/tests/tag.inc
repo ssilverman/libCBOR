@@ -10,9 +10,11 @@ test(tag_2) {
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cbor{bs};
   assertFalse(cbor.isWellFormed());  // Missing something after the tag
+  assertEqual(cbor.getReadSize(), size_t{1});
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kTag));
   assertTrue(cbor.getTag() == 2);
+  assertEqual(cbor.getReadSize(), size_t{2});
 }
 
 test(tag_55799) {
@@ -20,7 +22,9 @@ test(tag_55799) {
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cbor{bs};
   assertFalse(cbor.isWellFormed());  // Missing something after the tag
+  assertEqual(cbor.getReadSize(), size_t{3});
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kTag));
   assertTrue(cbor.getTag() == cbor::kSelfDescribeTag);
+  assertEqual(cbor.getReadSize(), size_t{6});
 }

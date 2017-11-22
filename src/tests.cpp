@@ -29,6 +29,7 @@ namespace cbor = ::qindesign::cbor;
 #include "tests/map.inc"
 #include "tests/write.inc"
 #include "tests/well_formed.inc"
+#include "tests/api.inc"
 
 // ***************************************************************************
 //  Main program

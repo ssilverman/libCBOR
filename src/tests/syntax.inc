@@ -13,9 +13,11 @@ test(disallow_bad_ai) {
       cbor::BytesStream bs{b, sizeof(b)};
       cbor::Reader cbor{bs};
       assertFalse(cbor.isWellFormed());
+      assertEqual(cbor.getReadSize(), size_t{1});
       bs.reset();
       assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kSyntaxError));
       assertEqual(static_cast<int>(cbor.getSyntaxError()), static_cast<int>(cbor::SyntaxError::kUnknownAdditionalInfo));
+      assertEqual(cbor.getReadSize(), size_t{2});
     }
   }
 }
@@ -25,9 +27,11 @@ test(disallow_indefinite_unsigned) {
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cbor{bs};
   assertFalse(cbor.isWellFormed());
+  assertEqual(cbor.getReadSize(), size_t{1});
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kSyntaxError));
   assertEqual(static_cast<int>(cbor.getSyntaxError()), static_cast<int>(cbor::SyntaxError::kNotAnIndefiniteType));
+  assertEqual(cbor.getReadSize(), size_t{2});
 }
 
 test(disallow_indefinite_negative) {
@@ -35,9 +39,11 @@ test(disallow_indefinite_negative) {
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cbor{bs};
   assertFalse(cbor.isWellFormed());
+  assertEqual(cbor.getReadSize(), size_t{1});
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kSyntaxError));
   assertEqual(static_cast<int>(cbor.getSyntaxError()), static_cast<int>(cbor::SyntaxError::kNotAnIndefiniteType));
+  assertEqual(cbor.getReadSize(), size_t{2});
 }
 
 test(disallow_indefinite_tag) {
@@ -45,9 +51,11 @@ test(disallow_indefinite_tag) {
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cbor{bs};
   assertFalse(cbor.isWellFormed());
+  assertEqual(cbor.getReadSize(), size_t{1});
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kSyntaxError));
   assertEqual(static_cast<int>(cbor.getSyntaxError()), static_cast<int>(cbor::SyntaxError::kNotAnIndefiniteType));
+  assertEqual(cbor.getReadSize(), size_t{2});
 }
 
 // Technically, this test should disallow simple values < 32. They are
@@ -59,10 +67,12 @@ test(disallow_but_allow_some_simple_values) {
     cbor::BytesStream bs{b, sizeof(b)};
     cbor::Reader cbor{bs};
     assertTrue(cbor.isWellFormed());
+    assertEqual(cbor.getReadSize(), size_t{2});
     bs.reset();
     // assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kSyntaxError));
     // assertEqual(static_cast<int>(cbor.getSyntaxError()), static_cast<int>(cbor::SyntaxError::kBadSimpleValue));
     assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kSimpleValue));
     assertEqual(cbor.getSimpleValue(), i);
+    assertEqual(cbor.getReadSize(), size_t{4});
   }
 }

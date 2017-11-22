@@ -10,10 +10,12 @@ test(write_boolean_false) {
   cbor::BytesPrint bp{b, sizeof(b)};
   cbor::Writer cbor{bp};
   cbor.writeBoolean(false);
+  assertEqual(cbor.getWriteSize(), size_t{1});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{1});
 
   uint8_t b2[] = { (7 << 5) + 20 };
   assertEqual(sizeof(b), sizeof(b2));
@@ -28,10 +30,12 @@ test(write_boolean_true) {
   cbor::BytesPrint bp{b, sizeof(b)};
   cbor::Writer cbor{bp};
   cbor.writeBoolean(true);
+  assertEqual(cbor.getWriteSize(), size_t{1});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{1});
 
   uint8_t b2[] = { (7 << 5) + 21 };
   assertEqual(sizeof(b), sizeof(b2));
@@ -46,10 +50,12 @@ test(write_float_negative_4p1) {
   cbor::BytesPrint bp{b, sizeof(b)};
   cbor::Writer cbor{bp};
   cbor.writeFloat(-4.1f);
+  assertEqual(cbor.getWriteSize(), size_t{5});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{5});
 
   uint8_t b2[] = { (7 << 5) + 26, 0xc0, 0x83, 0x33, 0x33 };
   assertEqual(sizeof(b), sizeof(b2));
@@ -64,10 +70,12 @@ test(write_float_100000) {
   cbor::BytesPrint bp{b, sizeof(b)};
   cbor::Writer cbor{bp};
   cbor.writeFloat(100000.0f);
+  assertEqual(cbor.getWriteSize(), size_t{5});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{5});
 
   uint8_t b2[] = { (7 << 5) + 26, 0x47, 0xc3, 0x50, 0x00 };
   assertEqual(sizeof(b), sizeof(b2));
@@ -82,10 +90,12 @@ test(write_float_large) {
   cbor::BytesPrint bp{b, sizeof(b)};
   cbor::Writer cbor{bp};
   cbor.writeFloat(3.4028234663852886e+38f);
+  assertEqual(cbor.getWriteSize(), size_t{5});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{5});
 
   uint8_t b2[] = { (7 << 5) + 26, 0x7f, 0x7f, 0xff, 0xff };
   assertEqual(sizeof(b), sizeof(b2));
@@ -100,10 +110,12 @@ test(write_float_infinity) {
   cbor::BytesPrint bp{b, sizeof(b)};
   cbor::Writer cbor{bp};
   cbor.writeFloat(INFINITY);
+  assertEqual(cbor.getWriteSize(), size_t{5});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{5});
 
   uint8_t b2[] = { (7 << 5) + 26, 0x7f, 0x80, 0x00, 0x00 };
   assertEqual(sizeof(b), sizeof(b2));
@@ -118,10 +130,12 @@ test(write_float_negative_infinity) {
   cbor::BytesPrint bp{b, sizeof(b)};
   cbor::Writer cbor{bp};
   cbor.writeFloat(-INFINITY);
+  assertEqual(cbor.getWriteSize(), size_t{5});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{5});
 
   uint8_t b2[] = { (7 << 5) + 26, 0xff, 0x80, 0x00, 0x00 };
   assertEqual(sizeof(b), sizeof(b2));
@@ -136,10 +150,12 @@ test(write_float_nan) {
   cbor::BytesPrint bp{b, sizeof(b)};
   cbor::Writer cbor{bp};
   cbor.writeFloat(NAN);
+  assertEqual(cbor.getWriteSize(), size_t{5});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{5});
 
   uint8_t b2[] = { (7 << 5) + 26, 0x7f, 0xc0, 0x00, 0x00 };
   assertEqual(sizeof(b), sizeof(b2));
@@ -154,10 +170,12 @@ test(write_double_1p1) {
   cbor::BytesPrint bp{b, sizeof(b)};
   cbor::Writer cbor{bp};
   cbor.writeDouble(1.1);
+  assertEqual(cbor.getWriteSize(), size_t{9});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{9});
 
   uint8_t b2[] = { (7 << 5) + 27, 0x3f, 0xf1, 0x99, 0x99, 0x99, 0x99, 0x99, 0x9a };
   assertEqual(sizeof(b), sizeof(b2));
@@ -172,10 +190,12 @@ test(write_double_negative_4p1) {
   cbor::BytesPrint bp{b, sizeof(b)};
   cbor::Writer cbor{bp};
   cbor.writeDouble(-4.1);
+  assertEqual(cbor.getWriteSize(), size_t{9});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{9});
 
   uint8_t b2[] = { (7 << 5) + 27, 0xc0, 0x10, 0x66, 0x66, 0x66, 0x66, 0x66, 0x66 };
   assertEqual(sizeof(b), sizeof(b2));
@@ -190,10 +210,12 @@ test(write_double_large) {
   cbor::BytesPrint bp{b, sizeof(b)};
   cbor::Writer cbor{bp};
   cbor.writeDouble(1.0e+300);
+  assertEqual(cbor.getWriteSize(), size_t{9});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{9});
 
   uint8_t b2[] = { (7 << 5) + 27, 0x7e, 0x37, 0xe4, 0x3c, 0x88, 0x00, 0x75, 0x9c };
   assertEqual(sizeof(b), sizeof(b2));
@@ -208,10 +230,12 @@ test(write_double_infinity) {
   cbor::BytesPrint bp{b, sizeof(b)};
   cbor::Writer cbor{bp};
   cbor.writeDouble(INFINITY);
+  assertEqual(cbor.getWriteSize(), size_t{9});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{9});
 
   uint8_t b2[] = { (7 << 5) + 27, 0x7f, 0xf0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
   assertEqual(sizeof(b), sizeof(b2));
@@ -226,10 +250,12 @@ test(write_double_negative_infinity) {
   cbor::BytesPrint bp{b, sizeof(b)};
   cbor::Writer cbor{bp};
   cbor.writeDouble(-INFINITY);
+  assertEqual(cbor.getWriteSize(), size_t{9});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{9});
 
   uint8_t b2[] = { (7 << 5) + 27, 0xff, 0xf0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
   assertEqual(sizeof(b), sizeof(b2));
@@ -244,10 +270,12 @@ test(write_double_nan) {
   cbor::BytesPrint bp{b, sizeof(b)};
   cbor::Writer cbor{bp};
   cbor.writeDouble(NAN);
+  assertEqual(cbor.getWriteSize(), size_t{9});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{9});
 
   uint8_t b2[] = { (7 << 5) + 27, 0x7f, 0xf8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
   assertEqual(sizeof(b), sizeof(b2));
@@ -262,10 +290,12 @@ test(write_unsigned_zero) {
   cbor::BytesPrint bp{b, sizeof(b)};
   cbor::Writer cbor{bp};
   cbor.writeUnsignedInt(0);
+  assertEqual(cbor.getWriteSize(), size_t{1});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{1});
 
   uint8_t b2[] = { (0 << 5) + 0 };
   assertEqual(sizeof(b), sizeof(b2));
@@ -280,10 +310,12 @@ test(write_unsigned_23) {
   cbor::BytesPrint bp{b, sizeof(b)};
   cbor::Writer cbor{bp};
   cbor.writeUnsignedInt(23);
+  assertEqual(cbor.getWriteSize(), size_t{1});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{1});
 
   uint8_t b2[] = { (0 << 5) + 23 };
   assertEqual(sizeof(b), sizeof(b2));
@@ -298,10 +330,12 @@ test(write_unsigned_1_byte) {
   cbor::BytesPrint bp{b, sizeof(b)};
   cbor::Writer cbor{bp};
   cbor.writeUnsignedInt(24);
+  assertEqual(cbor.getWriteSize(), size_t{2});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{2});
 
   uint8_t b2[] = { (0 << 5) + 24, 24 };
   assertEqual(sizeof(b), sizeof(b2));
@@ -316,10 +350,12 @@ test(write_unsigned_2_bytes) {
   cbor::BytesPrint bp{b, sizeof(b)};
   cbor::Writer cbor{bp};
   cbor.writeUnsignedInt(0x0102);
+  assertEqual(cbor.getWriteSize(), size_t{3});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{3});
 
   uint8_t b2[] = { (0 << 5) + 25, 0x01, 0x02 };
   assertEqual(sizeof(b), sizeof(b2));
@@ -334,10 +370,12 @@ test(write_unsigned_4_bytes) {
   cbor::BytesPrint bp{b, sizeof(b)};
   cbor::Writer cbor{bp};
   cbor.writeUnsignedInt(0x01020304UL);
+  assertEqual(cbor.getWriteSize(), size_t{5});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{5});
 
   uint8_t b2[] = { (0 << 5) + 26, 0x01, 0x02, 0x03, 0x04 };
   assertEqual(sizeof(b), sizeof(b2));
@@ -352,10 +390,12 @@ test(write_unsigned_8_bytes) {
   cbor::BytesPrint bp{b, sizeof(b)};
   cbor::Writer cbor{bp};
   cbor.writeUnsignedInt(0x0102030405060708ULL);
+  assertEqual(cbor.getWriteSize(), size_t{9});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{9});
 
   uint8_t b2[] = { (0 << 5) + 27, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08 };
   assertEqual(sizeof(b), sizeof(b2));
@@ -370,10 +410,12 @@ test(write_negative_24) {
   cbor::BytesPrint bp{b, sizeof(b)};
   cbor::Writer cbor{bp};
   cbor.writeInt(-24);
+  assertEqual(cbor.getWriteSize(), size_t{1});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{1});
 
   uint8_t b2[] = { (1 << 5) + 23 };
   assertEqual(sizeof(b), sizeof(b2));
@@ -388,10 +430,12 @@ test(write_negative_1_byte) {
   cbor::BytesPrint bp{b, sizeof(b)};
   cbor::Writer cbor{bp};
   cbor.writeInt(-25);
+  assertEqual(cbor.getWriteSize(), size_t{2});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{2});
 
   uint8_t b2[] = { (1 << 5) + 24, 24 };
   assertEqual(sizeof(b), sizeof(b2));
@@ -406,10 +450,12 @@ test(write_negative_2_bytes) {
   cbor::BytesPrint bp{b, sizeof(b)};
   cbor::Writer cbor{bp};
   cbor.writeInt(-0x0103);
+  assertEqual(cbor.getWriteSize(), size_t{3});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{3});
 
   uint8_t b2[] = { (1 << 5) + 25, 0x01, 0x02 };
   assertEqual(sizeof(b), sizeof(b2));
@@ -424,10 +470,12 @@ test(write_negative_4_bytes) {
   cbor::BytesPrint bp{b, sizeof(b)};
   cbor::Writer cbor{bp};
   cbor.writeInt(-0x01020305L);
+  assertEqual(cbor.getWriteSize(), size_t{5});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{5});
 
   uint8_t b2[] = { (1 << 5) + 26, 0x01, 0x02, 0x03, 0x04 };
   assertEqual(sizeof(b), sizeof(b2));
@@ -442,10 +490,12 @@ test(write_negative_8_bytes) {
   cbor::BytesPrint bp{b, sizeof(b)};
   cbor::Writer cbor{bp};
   cbor.writeInt(-0x0102030405060709LL);
+  assertEqual(cbor.getWriteSize(), size_t{9});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{9});
 
   uint8_t b2[] = { (1 << 5) + 27, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08 };
   assertEqual(sizeof(b), sizeof(b2));
@@ -460,10 +510,12 @@ test(write_null) {
   cbor::BytesPrint bp{b, sizeof(b)};
   cbor::Writer cbor{bp};
   cbor.writeNull();
+  assertEqual(cbor.getWriteSize(), size_t{1});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{1});
 
   uint8_t b2[] = { (7 << 5) + 22 };
   assertEqual(sizeof(b), sizeof(b2));
@@ -478,10 +530,12 @@ test(write_undefined) {
   cbor::BytesPrint bp{b, sizeof(b)};
   cbor::Writer cbor{bp};
   cbor.writeUndefined();
+  assertEqual(cbor.getWriteSize(), size_t{1});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{1});
 
   uint8_t b2[] = { (7 << 5) + 23 };
   assertEqual(sizeof(b), sizeof(b2));
@@ -496,10 +550,12 @@ test(write_simple_value_19) {
   cbor::BytesPrint bp{b, sizeof(b)};
   cbor::Writer cbor{bp};
   cbor.writeSimpleValue(19);
+  assertEqual(cbor.getWriteSize(), size_t{1});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{1});
 
   uint8_t b2[] = { (7 << 5) + 19 };
   assertEqual(sizeof(b), sizeof(b2));
@@ -514,10 +570,12 @@ test(write_simple_value_1_byte) {
   cbor::BytesPrint bp{b, sizeof(b)};
   cbor::Writer cbor{bp};
   cbor.writeSimpleValue(32);
+  assertEqual(cbor.getWriteSize(), size_t{2});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{2});
 
   uint8_t b2[] = { (7 << 5) + 24, 32 };
   assertEqual(sizeof(b), sizeof(b2));
@@ -533,10 +591,12 @@ test(write_tag_zero) {
   cbor::Writer cbor{bp};
   cbor.writeTag(0);
   cbor.writeUnsignedInt(1);  // Ensure there's something after the tag for well-formedness
+  assertEqual(cbor.getWriteSize(), size_t{2});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{2});
 
   uint8_t b2[] = { (6 << 5) + 0, (0 << 5) + 1 };
   assertEqual(sizeof(b), sizeof(b2));
@@ -552,10 +612,12 @@ test(write_tag_23) {
   cbor::Writer cbor{bp};
   cbor.writeTag(23);
   cbor.writeUnsignedInt(1);  // Ensure there's something after the tag for well-formedness
+  assertEqual(cbor.getWriteSize(), size_t{2});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{2});
 
   uint8_t b2[] = { (6 << 5) + 23, (0 << 5) + 1 };
   assertEqual(sizeof(b), sizeof(b2));
@@ -571,10 +633,12 @@ test(write_tag_1_byte) {
   cbor::Writer cbor{bp};
   cbor.writeTag(24);
   cbor.writeUnsignedInt(1);  // Ensure there's something after the tag for well-formedness
+  assertEqual(cbor.getWriteSize(), size_t{3});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{3});
 
   uint8_t b2[] = { (6 << 5) + 24, 24, (0 << 5) + 1 };
   assertEqual(sizeof(b), sizeof(b2));
@@ -590,10 +654,12 @@ test(write_tag_2_bytes) {
   cbor::Writer cbor{bp};
   cbor.writeTag(0x0102);
   cbor.writeUnsignedInt(1);  // Ensure there's something after the tag for well-formedness
+  assertEqual(cbor.getWriteSize(), size_t{4});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{4});
 
   uint8_t b2[] = { (6 << 5) + 25, 0x01, 0x02, (0 << 5) + 1 };
   assertEqual(sizeof(b), sizeof(b2));
@@ -609,10 +675,12 @@ test(write_tag_4_bytes) {
   cbor::Writer cbor{bp};
   cbor.writeTag(0x01020304UL);
   cbor.writeUnsignedInt(1);  // Ensure there's something after the tag for well-formedness
+  assertEqual(cbor.getWriteSize(), size_t{6});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{6});
 
   uint8_t b2[] = { (6 << 5) + 26, 0x01, 0x02, 0x03, 0x04, (0 << 5) + 1 };
   assertEqual(sizeof(b), sizeof(b2));
@@ -628,10 +696,12 @@ test(write_tag_8_bytes) {
   cbor::Writer cbor{bp};
   cbor.writeTag(0x0102030405060708ULL);
   cbor.writeUnsignedInt(1);  // Ensure there's something after the tag for well-formedness
+  assertEqual(cbor.getWriteSize(), size_t{10});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{10});
 
   uint8_t b2[] = { (6 << 5) + 27, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, (0 << 5) + 1 };
   assertEqual(sizeof(b), sizeof(b2));
@@ -646,10 +716,12 @@ test(write_bytes_empty) {
   cbor::BytesPrint bp{b, sizeof(b)};
   cbor::Writer cbor{bp};
   cbor.beginBytes(0);
+  assertEqual(cbor.getWriteSize(), size_t{1});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{1});
 
   uint8_t b2[] = { (2 << 5) + 0 };
   assertEqual(sizeof(b), sizeof(b2));
@@ -665,10 +737,12 @@ test(write_bytes_indefinite_empty) {
   cbor::Writer cbor{bp};
   cbor.beginIndefiniteBytes();
   cbor.endIndefinite();
+  assertEqual(cbor.getWriteSize(), size_t{2});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{2});
 
   uint8_t b2[] = { (2 << 5) + 31, (7 << 5) + 31 };
   assertEqual(sizeof(b), sizeof(b2));
@@ -685,10 +759,12 @@ test(write_bytes_2) {
   cbor.beginBytes(2);
   uint8_t data[] = { 0x01, 0x02 };
   cbor.writeBytes(data, sizeof(data));
+  assertEqual(cbor.getWriteSize(), size_t{3});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{3});
 
   uint8_t b2[] = { (2 << 5) + 2, 0x01, 0x02 };
   assertEqual(sizeof(b), sizeof(b2));
@@ -707,10 +783,12 @@ test(write_bytes_indefinite) {
   cbor.beginBytes(sizeof(data));
   cbor.writeBytes(data, sizeof(data));
   cbor.endIndefinite();
+  assertEqual(cbor.getWriteSize(), size_t{4});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{4});
 
   uint8_t b2[] = { (2 << 5) + 31, (2 << 5) + 1, 0x01, (7 << 5) + 31 };
   assertEqual(sizeof(b), sizeof(b2));
@@ -725,10 +803,12 @@ test(write_text_empty) {
   cbor::BytesPrint bp{b, sizeof(b)};
   cbor::Writer cbor{bp};
   cbor.beginText(0);
+  assertEqual(cbor.getWriteSize(), size_t{1});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{1});
 
   uint8_t b2[] = { (3 << 5) + 0 };
   assertEqual(sizeof(b), sizeof(b2));
@@ -744,10 +824,12 @@ test(write_text_indefinite_empty) {
   cbor::Writer cbor{bp};
   cbor.beginIndefiniteText();
   cbor.endIndefinite();
+  assertEqual(cbor.getWriteSize(), size_t{2});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{2});
 
   uint8_t b2[] = { (3 << 5) + 31, (7 << 5) + 31 };
   assertEqual(sizeof(b), sizeof(b2));
@@ -764,10 +846,12 @@ test(write_text_2) {
   cbor.beginText(2);
   uint8_t data[] = { 0x01, 0x02 };
   cbor.writeBytes(data, sizeof(data));
+  assertEqual(cbor.getWriteSize(), size_t{3});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{3});
 
   uint8_t b2[] = { (3 << 5) + 2, 0x01, 0x02 };
   assertEqual(sizeof(b), sizeof(b2));
@@ -786,10 +870,12 @@ test(write_text_indefinite) {
   cbor.beginText(sizeof(data));
   cbor.writeBytes(data, sizeof(data));
   cbor.endIndefinite();
+  assertEqual(cbor.getWriteSize(), size_t{4});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{4});
 
   uint8_t b2[] = { (3 << 5) + 31, (3 << 5) + 1, 0x01, (7 << 5) + 31 };
   assertEqual(sizeof(b), sizeof(b2));
@@ -804,10 +890,12 @@ test(write_array_empty) {
   cbor::BytesPrint bp{b, sizeof(b)};
   cbor::Writer cbor{bp};
   cbor.beginArray(0);
+  assertEqual(cbor.getWriteSize(), size_t{1});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{1});
 
   uint8_t b2[] = { (4 << 5) + 0 };
   assertEqual(sizeof(b), sizeof(b2));
@@ -823,10 +911,12 @@ test(write_array_indefinite_empty) {
   cbor::Writer cbor{bp};
   cbor.beginIndefiniteArray();
   cbor.endIndefinite();
+  assertEqual(cbor.getWriteSize(), size_t{2});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{2});
 
   uint8_t b2[] = { (4 << 5) + 31, (7 << 5) + 31 };
   assertEqual(sizeof(b), sizeof(b2));
@@ -845,10 +935,12 @@ test(write_array_2) {
   for (size_t i = 0; i < sizeof(data); i++) {
     cbor.writeUnsignedInt(data[i]);
   }
+  assertEqual(cbor.getWriteSize(), size_t{3});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{3});
 
   uint8_t b2[] = { (4 << 5) + 2, 0x01, 0x02 };
   assertEqual(sizeof(b), sizeof(b2));
@@ -868,10 +960,12 @@ test(write_array_indefinite) {
     cbor.writeUnsignedInt(data[i]);
   }
   cbor.endIndefinite();
+  assertEqual(cbor.getWriteSize(), size_t{3});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{3});
 
   uint8_t b2[] = { (4 << 5) + 31, 0x01, (7 << 5) + 31 };
   assertEqual(sizeof(b), sizeof(b2));
@@ -886,10 +980,12 @@ test(write_map_empty) {
   cbor::BytesPrint bp{b, sizeof(b)};
   cbor::Writer cbor{bp};
   cbor.beginMap(0);
+  assertEqual(cbor.getWriteSize(), size_t{1});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{1});
 
   uint8_t b2[] = { (5 << 5) + 0 };
   assertEqual(sizeof(b), sizeof(b2));
@@ -905,10 +1001,12 @@ test(write_map_indefinite_empty) {
   cbor::Writer cbor{bp};
   cbor.beginIndefiniteMap();
   cbor.endIndefinite();
+  assertEqual(cbor.getWriteSize(), size_t{2});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{2});
 
   uint8_t b2[] = { (5 << 5) + 31, (7 << 5) + 31 };
   assertEqual(sizeof(b), sizeof(b2));
@@ -927,10 +1025,12 @@ test(write_map_2) {
   for (size_t i = 0; i < sizeof(data); i++) {
     cbor.writeUnsignedInt(data[i]);
   }
+  assertEqual(cbor.getWriteSize(), size_t{5});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{5});
 
   uint8_t b2[] = { (5 << 5) + 2, 0x01, 0x02, 0x03, 0x04 };
   assertEqual(sizeof(b), sizeof(b2));
@@ -950,10 +1050,12 @@ test(write_map_indefinite) {
     cbor.writeUnsignedInt(data[i]);
   }
   cbor.endIndefinite();
+  assertEqual(cbor.getWriteSize(), size_t{4});
 
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cborReader{bs};
   assertTrue(cborReader.isWellFormed());
+  assertEqual(cborReader.getReadSize(), size_t{4});
 
   uint8_t b2[] = { (5 << 5) + 31, 0x01, 0x02, (7 << 5) + 31 };
   assertEqual(sizeof(b), sizeof(b2));

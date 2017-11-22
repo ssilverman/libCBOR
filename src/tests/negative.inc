@@ -10,9 +10,11 @@ test(negative_zero) {
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cbor{bs};
   assertTrue(cbor.isWellFormed());
+  assertEqual(cbor.getReadSize(), size_t{1});
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kNegativeInt));
   assertTrue(cbor.getInt() == -1);
+  assertEqual(cbor.getReadSize(), size_t{2});
 }
 
 test(negative_19) {
@@ -20,9 +22,11 @@ test(negative_19) {
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cbor{bs};
   assertTrue(cbor.isWellFormed());
+  assertEqual(cbor.getReadSize(), size_t{1});
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kNegativeInt));
   assertTrue(cbor.getInt() == -20);
+  assertEqual(cbor.getReadSize(), size_t{2});
 }
 
 test(negative_23) {
@@ -30,9 +34,11 @@ test(negative_23) {
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cbor{bs};
   assertTrue(cbor.isWellFormed());
+  assertEqual(cbor.getReadSize(), size_t{1});
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kNegativeInt));
   assertTrue(cbor.getInt() == -24);
+  assertEqual(cbor.getReadSize(), size_t{2});
 }
 
 test(negative_1_byte) {
@@ -40,9 +46,11 @@ test(negative_1_byte) {
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cbor{bs};
   assertTrue(cbor.isWellFormed());
+  assertEqual(cbor.getReadSize(), size_t{2});
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kNegativeInt));
   assertTrue(cbor.getInt() == -0x13);
+  assertEqual(cbor.getReadSize(), size_t{4});
 }
 
 test(negative_2_bytes) {
@@ -50,9 +58,11 @@ test(negative_2_bytes) {
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cbor{bs};
   assertTrue(cbor.isWellFormed());
+  assertEqual(cbor.getReadSize(), size_t{3});
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kNegativeInt));
   assertTrue(cbor.getInt() == -0x1235);
+  assertEqual(cbor.getReadSize(), size_t{6});
 }
 
 test(negative_4_bytes) {
@@ -60,9 +70,11 @@ test(negative_4_bytes) {
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cbor{bs};
   assertTrue(cbor.isWellFormed());
+  assertEqual(cbor.getReadSize(), size_t{5});
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kNegativeInt));
   assertTrue(cbor.getInt() == -0x12345679L);
+  assertEqual(cbor.getReadSize(), size_t{10});
 }
 
 test(negative_8_bytes) {
@@ -70,7 +82,9 @@ test(negative_8_bytes) {
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cbor{bs};
   assertTrue(cbor.isWellFormed());
+  assertEqual(cbor.getReadSize(), size_t{9});
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kNegativeInt));
   assertTrue(cbor.getInt() == -0x123456789abcdef1LL);
+  assertEqual(cbor.getReadSize(), size_t{18});
 }

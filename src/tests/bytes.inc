@@ -10,9 +10,11 @@ test(bytes_empty) {
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cbor{bs};
   assertTrue(cbor.isWellFormed());
+  assertEqual(cbor.getReadSize(), size_t{1});
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kBytes));
   assertTrue(cbor.getLength() == 0);
+  assertEqual(cbor.getReadSize(), size_t{2});
 }
 
 test(bytes_something) {
@@ -20,12 +22,14 @@ test(bytes_something) {
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cbor{bs};
   assertTrue(cbor.isWellFormed());
+  assertEqual(cbor.getReadSize(), size_t{5});
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kBytes));
   assertTrue(cbor.getLength() == 4);
   uint8_t b2[5]{0};
   assertEqual(cbor.readBytes(b2, 4), size_t{4});
   assertEqual(reinterpret_cast<char*>(&b2[0]), reinterpret_cast<char*>(&b[1]));
+  assertEqual(cbor.getReadSize(), size_t{10});
 }
 
 test(bytes_indefinite) {
@@ -33,6 +37,7 @@ test(bytes_indefinite) {
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cbor{bs};
   assertTrue(cbor.isWellFormed());
+  assertEqual(cbor.getReadSize(), size_t{9});
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kBytes));
   assertTrue(cbor.isIndefiniteLength());
@@ -48,6 +53,7 @@ test(bytes_indefinite) {
 
   uint8_t b3[] = { 0x01, 0x02, 0x03, 0x04, 0x05, 0 };
   assertEqual(reinterpret_cast<char*>(b2), reinterpret_cast<char*>(b3));
+  assertEqual(cbor.getReadSize(), size_t{18});
 }
 
 test(text_empty) {
@@ -55,9 +61,11 @@ test(text_empty) {
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cbor{bs};
   assertTrue(cbor.isWellFormed());
+  assertEqual(cbor.getReadSize(), size_t{1});
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kText));
   assertTrue(cbor.getLength() == 0);
+  assertEqual(cbor.getReadSize(), size_t{2});
 }
 
 test(text_something) {
@@ -65,12 +73,14 @@ test(text_something) {
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cbor{bs};
   assertTrue(cbor.isWellFormed());
+  assertEqual(cbor.getReadSize(), size_t{5});
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kText));
   assertTrue(cbor.getLength() == 4);
   uint8_t b2[5]{0};
   assertEqual(cbor.readBytes(b2, 4), size_t{4});
   assertEqual(reinterpret_cast<char*>(&b2[0]), reinterpret_cast<char*>(&b[1]));
+  assertEqual(cbor.getReadSize(), size_t{10});
 }
 
 test(text_indefinite) {
@@ -78,6 +88,7 @@ test(text_indefinite) {
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cbor{bs};
   assertTrue(cbor.isWellFormed());
+  assertEqual(cbor.getReadSize(), size_t{13});
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kText));
   assertTrue(cbor.isIndefiniteLength());
@@ -94,4 +105,5 @@ test(text_indefinite) {
 
   uint8_t b3[] = { 0x73, 0x74, 0x72, 0x65, 0x61, 0x6d, 0x69, 0x6e, 0x67, 0 };
   assertEqual(reinterpret_cast<char*>(b2), reinterpret_cast<char*>(b3));
+  assertEqual(cbor.getReadSize(), size_t{26});
 }

@@ -10,9 +10,11 @@ test(map_empty) {
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cbor{bs};
   assertTrue(cbor.isWellFormed());
+  assertEqual(cbor.getReadSize(), size_t{1});
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kMap));
   assertTrue(cbor.getLength() == 0);
+  assertEqual(cbor.getReadSize(), size_t{2});
 }
 
 test(map_indefinite_empty) {
@@ -20,10 +22,12 @@ test(map_indefinite_empty) {
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cbor{bs};
   assertTrue(cbor.isWellFormed());
+  assertEqual(cbor.getReadSize(), size_t{2});
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kMap));
   assertTrue(cbor.isIndefiniteLength());
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kBreak));
+  assertEqual(cbor.getReadSize(), size_t{4});
 }
 
 test(map_something) {
@@ -31,6 +35,7 @@ test(map_something) {
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cbor{bs};
   assertTrue(cbor.isWellFormed());
+  assertEqual(cbor.getReadSize(), size_t{6});
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kMap));
   assertTrue(cbor.getLength() == 2);
@@ -43,6 +48,7 @@ test(map_something) {
   assertTrue(cbor.getInt() == -4);
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kUnsignedInt));
   assertTrue(cbor.getUnsignedInt() == 24);
+  assertEqual(cbor.getReadSize(), size_t{12});
 }
 
 test(map_indefinite) {
@@ -50,6 +56,7 @@ test(map_indefinite) {
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cbor{bs};
   assertTrue(cbor.isWellFormed());
+  assertEqual(cbor.getReadSize(), size_t{7});
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kMap));
   assertTrue(cbor.isIndefiniteLength());
@@ -64,4 +71,5 @@ test(map_indefinite) {
   assertTrue(cbor.getUnsignedInt() == 24);
 
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kBreak));
+  assertEqual(cbor.getReadSize(), size_t{14});
 }

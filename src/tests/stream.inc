@@ -10,8 +10,10 @@ test(empty_stream) {
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cbor{bs};
   assertFalse(cbor.isWellFormed());
+  assertEqual(cbor.getReadSize(), size_t{0});
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kEOS));
+  assertEqual(cbor.getReadSize(), size_t{0});
 }
 
 test(partial_1_byte) {
@@ -19,8 +21,10 @@ test(partial_1_byte) {
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cbor{bs};
   assertFalse(cbor.isWellFormed());
+  assertEqual(cbor.getReadSize(), size_t{1});
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kEOS));
+  assertEqual(cbor.getReadSize(), size_t{2});
 }
 
 test(partial_2_bytes) {
@@ -28,8 +32,10 @@ test(partial_2_bytes) {
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cbor{bs};
   assertFalse(cbor.isWellFormed());
+  assertEqual(cbor.getReadSize(), size_t{1});
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kEOS));
+  assertEqual(cbor.getReadSize(), size_t{2});
 }
 
 test(partial_4_bytes) {
@@ -37,8 +43,10 @@ test(partial_4_bytes) {
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cbor{bs};
   assertFalse(cbor.isWellFormed());
+  assertEqual(cbor.getReadSize(), size_t{1});
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kEOS));
+  assertEqual(cbor.getReadSize(), size_t{2});
 }
 
 test(partial_8_bytes) {
@@ -46,8 +54,10 @@ test(partial_8_bytes) {
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader cbor{bs};
   assertFalse(cbor.isWellFormed());
+  assertEqual(cbor.getReadSize(), size_t{1});
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kEOS));
+  assertEqual(cbor.getReadSize(), size_t{2});
 }
 
 test(unsigned_1_byte_with_wait) {
@@ -55,9 +65,11 @@ test(unsigned_1_byte_with_wait) {
   cbor::BytesStream bs{b, sizeof(b), 1};
   cbor::Reader cbor{bs};
   assertFalse(cbor.isWellFormed());
+  assertEqual(cbor.getReadSize(), size_t{0});
   bs.reset();
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kEOS));
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kEOS));
   assertEqual(static_cast<int>(cbor.readDataType()), static_cast<int>(cbor::DataType::kUnsignedInt));
   assertTrue(cbor.getUnsignedInt() == 0x21);
+  assertEqual(cbor.getReadSize(), size_t{2});
 }
