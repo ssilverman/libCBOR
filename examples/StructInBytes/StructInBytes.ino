@@ -131,7 +131,8 @@ bool loadMyData(MyData *myData) {
     return false;
   }
   uint64_t length;
-  if (!expectText(cbor, &length)) {
+  bool isIndefinite;
+  if (!expectText(cbor, &length, &isIndefinite) || isIndefinite) {
     return false;
   }
   if (length > 10) {
