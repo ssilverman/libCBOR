@@ -32,6 +32,9 @@ bool expectFloatValue(Reader r, float f);
 // are considered different values.
 bool expectDoubleValue(Reader r, double d);
 
+// Expects a boolean value.
+bool expectBooleanValue(Reader r, bool b);
+
 // Expects that the next data item is a boolean and has the value 'true'.
 bool expectTrue(Reader r);
 
@@ -46,37 +49,43 @@ bool expectUnsignedInt(Reader r, uint64_t *u);
 // is a negative value and false otherwise.
 bool expectInt(Reader r, int64_t *i);
 
-// Expects bytes and fills in the length. This returns true if the data
-// item is non-indefinite length bytes and false otherwise.
-bool expectBytes(Reader r, uint64_t *length);
+// Expects bytes and fills in the length and a flag indicating whether it's
+// an indefinite-length data item. This returns true if the data item is the
+// bytes type and false otherwise. For bytes having an indefinite length,
+// what follows will be a series of definite-length bytes items, terminated
+// by a Break, assuming well-formed data.
+//
+// Use expectBytesOrBreak to read the definite-length bytes chunks.
+bool expectBytes(Reader r, uint64_t *length, bool *isIndefinite);
 
-// Expects bytes having indefinite length. This returns true if the data
-// item is one of these and false otherwise.
-bool expectIndefiniteBytes(Reader r);
+// Expects bytes and fills in the length and a flag indicating whether a
+// Break was found. This is used to detect the chunks following an
+// indefinite-length bytes data item.
+bool expectBytesOrBreak(Reader r, uint64_t *length, bool *isBreak);
 
-// Expects text and fills in the length. This returns true if the data
-// item is non-indefinite length text and false otherwise.
-bool expectText(Reader r, uint64_t *length);
+// Expects text and fills in the length and a flag indicating whether it's
+// an indefinite-length data item. This returns true if the data item is the
+// text type and false otherwise. For text having an indefinite length,
+// what follows will be a series of definite-length text items, terminated
+// by a Break, assuming well-formed data.
+//
+// Use expectTextOrBreak to read the definite-length bytes chunks.
+bool expectText(Reader r, uint64_t *length, bool *isIndefinite);
 
-// Expects text having indefinite length. This returns true if the data
-// item is one of these and false otherwise.
-bool expectIndefiniteText(Reader r);
+// Expects text and fills in the length and a flag indicating whether a
+// Break was found. This is used to detect the chunks following an
+// indefinite-length text data item.
+bool expectTextOrBreak(Reader r, uint64_t *length, bool *isBreak);
 
-// Expects an array and fills in the length. This returns true if the data
-// item is a non-indefinite length array and false otherwise.
-bool expectArray(Reader r, uint64_t *length);
+// Expects an array and fills in the length and a flag indicating whether it's
+// an indefinite-length array. This returns true if the data item is the array
+// type and false otherwise. Indefinite arrays are terminated with a Break.
+bool expectArray(Reader r, uint64_t *length, bool *isIndefinite);
 
-// Expects an indefinite length array. This returns true is the data item
-// is one of these and false otherwise.
-bool expectIndefiniteArray(Reader r);
-
-// Expects a map and fills in the length. This returns true if the data
-// item is a non-indefinite length map and false otherwise.
-bool expectMap(Reader r, uint64_t *length);
-
-// Expects an indefinite length map. This returns true is the data item
-// is one of these and false otherwise.
-bool expectIndefiniteMap(Reader r);
+// Expects a map and fills in the length and a flag indicating whether it's
+// an indefinite-length array. This returns true if the data item is the map
+// type and false otherwise. Indefinite maps are terminated with a Break.
+bool expectMap(Reader r, uint64_t *length, bool *isIndefinite);
 
 // Expects and fills in a boolean value. This returns true if the data item
 // is a boolean and false otherwise.

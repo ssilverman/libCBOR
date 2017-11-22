@@ -13,6 +13,7 @@
 
 // Project includes
 #include "CBOR.h"
+#include "CBOR_parsing.h"
 #include "CBOR_streams.h"
 
 namespace cbor = ::qindesign::cbor;
@@ -30,6 +31,7 @@ namespace cbor = ::qindesign::cbor;
 #include "tests/write.inc"
 #include "tests/well_formed.inc"
 #include "tests/api.inc"
+#include "tests/parsing.inc"
 
 // ***************************************************************************
 //  Main program

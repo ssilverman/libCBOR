@@ -57,7 +57,7 @@ bool expectDoubleValue(Reader r, double d) {
   if (r.readDataType() != DataType::kDouble) {
     return false;
   }
-  float v = r.getDouble();
+  double v = r.getDouble();
   if (std::isnan(d)) {
     return std::isnan(v);
   }
@@ -67,12 +67,16 @@ bool expectDoubleValue(Reader r, double d) {
   return v == d;
 }
 
+bool expectBooleanValue(Reader r, bool b) {
+  return (r.readDataType() == DataType::kBoolean) && r.getBoolean() == b;
+}
+
 bool expectTrue(Reader r) {
-  return (r.readDataType() == DataType::kBoolean) && r.getBoolean();
+  return expectBooleanValue(r, true);
 }
 
 bool expectFalse(Reader r) {
-  return (r.readDataType() == DataType::kBoolean) && !r.getBoolean();
+  return expectBooleanValue(r, false);
 }
 
 bool expectUnsignedInt(Reader r, uint64_t *u) {
@@ -91,52 +95,86 @@ bool expectInt(Reader r, int64_t *i) {
   return true;
 }
 
-bool expectBytes(Reader r, uint64_t *length) {
-  if (r.readDataType() != DataType::kBytes || r.isIndefiniteLength()) {
+bool expectBytes(Reader r, uint64_t *length, bool *isIndefinite) {
+  if (r.readDataType() != DataType::kBytes) {
     return false;
   }
-  *length = r.getLength();
+  if (r.isIndefiniteLength()) {
+    *isIndefinite = true;
+  } else {
+    *isIndefinite = false;
+    *length = r.getLength();
+  }
   return true;
 }
 
-bool expectIndefiniteBytes(Reader r) {
-  return (r.readDataType() == DataType::kBytes) && r.isIndefiniteLength();
-}
-
-bool expectText(Reader r, uint64_t *length) {
-  if (r.readDataType() != DataType::kText || r.isIndefiniteLength()) {
-    return false;
+bool expectBytesOrBreak(Reader r, uint64_t *length, bool *isBreak) {
+  switch (r.readDataType()) {
+    case DataType::kBytes:
+      *isBreak = false;
+      *length = r.getLength();
+      break;
+    case DataType::kBreak:
+      *isBreak = true;
+      break;
+    default:
+      return false;
   }
-  *length = r.getLength();
   return true;
 }
 
-bool expectIndefiniteText(Reader r) {
-  return (r.readDataType() == DataType::kText) && r.isIndefiniteLength();
-}
-
-bool expectArray(Reader r, uint64_t *length) {
-  if (r.readDataType() != DataType::kArray || r.isIndefiniteLength()) {
+bool expectText(Reader r, uint64_t *length, bool *isIndefinite) {
+  if (r.readDataType() != DataType::kText) {
     return false;
   }
-  *length = r.getLength();
+  if (r.isIndefiniteLength()) {
+    *isIndefinite = true;
+  } else {
+    *isIndefinite = false;
+    *length = r.getLength();
+  }
   return true;
 }
 
-bool expectIndefiniteArray(Reader r) {
-  return (r.readDataType() == DataType::kArray) && r.isIndefiniteLength();
-}
-
-bool expectMap(Reader r, uint64_t *length) {
-  if (r.readDataType() != DataType::kMap || r.isIndefiniteLength()) {
-    return false;
+bool expectTextOrBreak(Reader r, uint64_t *length, bool *isBreak) {
+  switch (r.readDataType()) {
+    case DataType::kText:
+      *isBreak = false;
+      *length = r.getLength();
+      break;
+    case DataType::kBreak:
+      *isBreak = true;
+      break;
+    default:
+      return false;
   }
-  *length = r.getLength();
   return true;
 }
 
-bool expectIndefiniteMap(Reader r) {
-  return (r.readDataType() == DataType::kMap) && r.isIndefiniteLength();
+bool expectArray(Reader r, uint64_t *length, bool *isIndefinite) {
+  if (r.readDataType() != DataType::kArray) {
+    return false;
+  }
+  if (r.isIndefiniteLength()) {
+    *isIndefinite = true;
+  } else {
+    *isIndefinite = false;
+    *length = r.getLength();
+  }
+  return true;
+}
+
+bool expectMap(Reader r, uint64_t *length, bool *isIndefinite) {
+  if (r.readDataType() != DataType::kMap) {
+    return false;
+  }
+  if (r.isIndefiniteLength()) {
+    *isIndefinite = true;
+  } else {
+    *isIndefinite = false;
+    *length = r.getLength();
+  }
+  return true;
 }
 
 bool expectBoolean(Reader r, bool *b) {
