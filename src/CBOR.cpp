@@ -170,6 +170,8 @@ DataType Reader::readDataType() {
             value_ = 0;
             return DataType::kUndefined;
           case 24:
+            // Values < 32 are invalid but technically well-formed, so
+            // don't do the following check:
             // if (value_ < 32) {
             //   syntaxError_ = SyntaxError::kBadSimpleValue;
             //   return DataType::kSyntaxError;
@@ -241,9 +243,10 @@ bool Reader::getBoolean() const {
     if (addlInfo_ == 21) {
       return true;
     }
-    if (addlInfo_ == 24 && value_ == 21) {
-      return true;
-    }
+    // Technically well-formed but invalid, so don't check for this:
+    // if (addlInfo_ == 24 && value_ == 21) {
+    //   return true;
+    // }
   }
   return false;
 }
@@ -406,8 +409,8 @@ int Reader::isWellFormed(int initialByte, bool breakable) {
         return -1;
       }
       val = static_cast<uint8_t>(read());
-      // Simple types having a 1-byte value < 32 are well-formed but
-      // technically invalid, so don't do the following check:
+      // Simple types having a 1-byte value < 32 are invalid but
+      // technically well-formed, so don't do the following check:
       // if (majorType == kSimpleOrFloat && val < 32) {
       //   return -1;
       // }
