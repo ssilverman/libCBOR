@@ -84,6 +84,9 @@ class Reader : public Stream {
   // to retrieve any immediate values. If this is called and returns
   // DataType::kEOS, then the data from any of the getXXX() functions will
   // be invalid.
+  //
+  // For bytes, text, arrays, and maps, only the length will be retrieved;
+  // further readBytes or readByte calls may be necessary.
   DataType readDataType();
 
   // Reads data for bytes or text. It is up to the caller to read the correct
@@ -152,6 +155,21 @@ class Reader : public Stream {
 
   // Returns the current tag value, or 0 if the value isn't a tag.
   uint64_t getTag() const;
+
+  // Returns whether the last read data value was a boolean False.
+  bool isFalse() const;
+
+  // Returns whether the last read data value was a boolean True.
+  bool isTrue() const;
+
+  // Returns whether the last read data value was a Null.
+  bool isNull() const;
+
+  // Returns whether the last read data value was an Undefined.
+  bool isUndefined() const;
+
+  // Returns whether the last read data value was a Break.
+  bool isBreak() const;
 
   // Checks if the next data item is well-formed. This includes any nested
   // items and advances the stream. A data item is considered not well-formed

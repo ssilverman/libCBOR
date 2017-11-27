@@ -361,6 +361,26 @@ uint64_t Reader::getTag() const {
   return 0ULL;
 }
 
+bool Reader::isFalse() const {
+  return majorType_ == kSimpleOrFloat && addlInfo_ == 20;
+}
+
+bool Reader::isTrue() const {
+  return majorType_ == kSimpleOrFloat && addlInfo_ == 21;
+}
+
+bool Reader::isNull() const {
+  return majorType_ == kSimpleOrFloat && addlInfo_ == 22;
+}
+
+bool Reader::isUndefined() const {
+  return majorType_ == kSimpleOrFloat && addlInfo_ == 23;
+}
+
+bool Reader::isBreak() const {
+  return majorType_ == kSimpleOrFloat && addlInfo_ == 31;
+}
+
 // ***************************************************************************
 //  Well-formedness checks
 // ***************************************************************************
