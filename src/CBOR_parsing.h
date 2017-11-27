@@ -127,7 +127,7 @@ bool expectTag(Reader r, uint64_t *v);
 // Attempts to read exactly len bytes into b. This will return the actual
 // number of bytes read, a smaller number than len only if the stream
 // encountered end-of-stream.
-unsigned int readFully(Reader r, uint8_t *b, size_t len);
+size_t readFully(Reader r, uint8_t *b, size_t len);
 
 // Reads from the reader until there's some data available. If end-of-stream
 // is encountered then this yields and keeps looking. Forever.
