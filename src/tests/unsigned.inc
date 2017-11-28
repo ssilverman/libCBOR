@@ -15,6 +15,7 @@ test(unsigned_zero) {
   assertEqual(static_cast<int>(r.readDataType()), static_cast<int>(cbor::DataType::kUnsignedInt));
   assertTrue(r.getUnsignedInt() == 0);
   assertEqual(r.getReadSize(), size_t{2});
+  assertEqual(r.isUnsigned(), true);
 }
 
 test(unsigned_19) {
@@ -27,6 +28,7 @@ test(unsigned_19) {
   assertEqual(static_cast<int>(r.readDataType()), static_cast<int>(cbor::DataType::kUnsignedInt));
   assertTrue(r.getUnsignedInt() == 19);
   assertEqual(r.getReadSize(), size_t{2});
+  assertEqual(r.isUnsigned(), true);
 }
 
 test(unsigned_23) {
@@ -39,6 +41,7 @@ test(unsigned_23) {
   assertEqual(static_cast<int>(r.readDataType()), static_cast<int>(cbor::DataType::kUnsignedInt));
   assertTrue(r.getUnsignedInt() == 23);
   assertEqual(r.getReadSize(), size_t{2});
+  assertEqual(r.isUnsigned(), true);
 }
 
 test(unsigned_1_byte) {
@@ -51,6 +54,7 @@ test(unsigned_1_byte) {
   assertEqual(static_cast<int>(r.readDataType()), static_cast<int>(cbor::DataType::kUnsignedInt));
   assertTrue(r.getUnsignedInt() == 0x12);
   assertEqual(r.getReadSize(), size_t{4});
+  assertEqual(r.isUnsigned(), true);
 }
 
 test(unsigned_2_bytes) {
@@ -63,6 +67,7 @@ test(unsigned_2_bytes) {
   assertEqual(static_cast<int>(r.readDataType()), static_cast<int>(cbor::DataType::kUnsignedInt));
   assertTrue(r.getUnsignedInt() == 0x1234);
   assertEqual(r.getReadSize(), size_t{6});
+  assertEqual(r.isUnsigned(), true);
 }
 
 test(unsigned_4_bytes) {
@@ -75,6 +80,7 @@ test(unsigned_4_bytes) {
   assertEqual(static_cast<int>(r.readDataType()), static_cast<int>(cbor::DataType::kUnsignedInt));
   assertTrue(r.getUnsignedInt() == 0x12345678UL);
   assertEqual(r.getReadSize(), size_t{10});
+  assertEqual(r.isUnsigned(), true);
 }
 
 test(unsigned_8_bytes) {
@@ -87,4 +93,5 @@ test(unsigned_8_bytes) {
   assertEqual(static_cast<int>(r.readDataType()), static_cast<int>(cbor::DataType::kUnsignedInt));
   assertTrue(r.getUnsignedInt() == 0x123456789abcdef0ULL);
   assertEqual(r.getReadSize(), size_t{18});
+  assertEqual(r.isUnsigned(), true);
 }

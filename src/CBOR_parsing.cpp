@@ -88,8 +88,12 @@ bool expectUnsignedInt(Reader r, uint64_t *u) {
 }
 
 bool expectInt(Reader r, int64_t *i) {
-  if (r.readDataType() != DataType::kNegativeInt) {
-    return false;
+  switch (r.readDataType()) {
+    case DataType::kNegativeInt:
+    case DataType::kUnsignedInt:
+      break;
+    default:
+      return false;
   }
   *i = r.getInt();
   return true;

@@ -345,9 +345,22 @@ uint64_t Reader::getUnsignedInt() const {
 
 int64_t Reader::getInt() const {
   if (majorType_ == kNegativeInt) {
-    return -1LL - static_cast<int64_t>(value_);
+    return static_cast<int64_t>(~value_);
+  }
+  if (majorType_ == kUnsignedInt) {
+    return static_cast<int64_t>(value_);
   }
   return 0LL;
+}
+
+bool Reader::isNegativeOverflow() const {
+  return
+      (majorType_ == kNegativeInt) &&
+      ((value_ & 0x8000000000000000ULL) != 0);
+}
+
+bool Reader::isUnsigned() const {
+  return (majorType_ == kUnsignedInt);
 }
 
 uint8_t Reader::getSimpleValue() const {

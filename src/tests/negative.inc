@@ -15,6 +15,8 @@ test(negative_zero) {
   assertEqual(static_cast<int>(r.readDataType()), static_cast<int>(cbor::DataType::kNegativeInt));
   assertTrue(r.getInt() == -1);
   assertEqual(r.getReadSize(), size_t{2});
+  assertEqual(r.isNegativeOverflow(), false);
+  assertEqual(r.isUnsigned(), false);
 }
 
 test(negative_19) {
@@ -27,6 +29,8 @@ test(negative_19) {
   assertEqual(static_cast<int>(r.readDataType()), static_cast<int>(cbor::DataType::kNegativeInt));
   assertTrue(r.getInt() == -20);
   assertEqual(r.getReadSize(), size_t{2});
+  assertEqual(r.isNegativeOverflow(), false);
+  assertEqual(r.isUnsigned(), false);
 }
 
 test(negative_23) {
@@ -39,6 +43,8 @@ test(negative_23) {
   assertEqual(static_cast<int>(r.readDataType()), static_cast<int>(cbor::DataType::kNegativeInt));
   assertTrue(r.getInt() == -24);
   assertEqual(r.getReadSize(), size_t{2});
+  assertEqual(r.isNegativeOverflow(), false);
+  assertEqual(r.isUnsigned(), false);
 }
 
 test(negative_1_byte) {
@@ -51,6 +57,8 @@ test(negative_1_byte) {
   assertEqual(static_cast<int>(r.readDataType()), static_cast<int>(cbor::DataType::kNegativeInt));
   assertTrue(r.getInt() == -0x13);
   assertEqual(r.getReadSize(), size_t{4});
+  assertEqual(r.isNegativeOverflow(), false);
+  assertEqual(r.isUnsigned(), false);
 }
 
 test(negative_2_bytes) {
@@ -63,6 +71,8 @@ test(negative_2_bytes) {
   assertEqual(static_cast<int>(r.readDataType()), static_cast<int>(cbor::DataType::kNegativeInt));
   assertTrue(r.getInt() == -0x1235);
   assertEqual(r.getReadSize(), size_t{6});
+  assertEqual(r.isNegativeOverflow(), false);
+  assertEqual(r.isUnsigned(), false);
 }
 
 test(negative_4_bytes) {
@@ -75,6 +85,8 @@ test(negative_4_bytes) {
   assertEqual(static_cast<int>(r.readDataType()), static_cast<int>(cbor::DataType::kNegativeInt));
   assertTrue(r.getInt() == -0x12345679L);
   assertEqual(r.getReadSize(), size_t{10});
+  assertEqual(r.isNegativeOverflow(), false);
+  assertEqual(r.isUnsigned(), false);
 }
 
 test(negative_8_bytes) {
@@ -87,4 +99,48 @@ test(negative_8_bytes) {
   assertEqual(static_cast<int>(r.readDataType()), static_cast<int>(cbor::DataType::kNegativeInt));
   assertTrue(r.getInt() == -0x123456789abcdef1LL);
   assertEqual(r.getReadSize(), size_t{18});
+  assertEqual(r.isNegativeOverflow(), false);
+  assertEqual(r.isUnsigned(), false);
+}
+
+test(negative_min) {
+  uint8_t b[] = { (1 << 5) + 27, 0x7f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
+  cbor::BytesStream bs{b, sizeof(b)};
+  cbor::Reader r{bs};
+  assertTrue(r.isWellFormed());
+  assertEqual(r.getReadSize(), size_t{9});
+  bs.reset();
+  assertEqual(static_cast<int>(r.readDataType()), static_cast<int>(cbor::DataType::kNegativeInt));
+  assertTrue(r.getInt() == (-0x7fffffffffffffffLL - 1LL));
+  assertEqual(r.getReadSize(), size_t{18});
+  assertEqual(r.isNegativeOverflow(), false);
+  assertEqual(r.isUnsigned(), false);
+}
+
+test(negative_overflow_1) {
+  uint8_t b[] = { (1 << 5) + 27, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+  cbor::BytesStream bs{b, sizeof(b)};
+  cbor::Reader r{bs};
+  assertTrue(r.isWellFormed());
+  assertEqual(r.getReadSize(), size_t{9});
+  bs.reset();
+  assertEqual(static_cast<int>(r.readDataType()), static_cast<int>(cbor::DataType::kNegativeInt));
+  assertTrue(r.getInt() == 0x7fffffffffffffffLL);
+  assertEqual(r.getReadSize(), size_t{18});
+  assertEqual(r.isNegativeOverflow(), true);
+  assertEqual(r.isUnsigned(), false);
+}
+
+test(negative_overflow_max) {
+  uint8_t b[] = { (1 << 5) + 27, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
+  cbor::BytesStream bs{b, sizeof(b)};
+  cbor::Reader r{bs};
+  assertTrue(r.isWellFormed());
+  assertEqual(r.getReadSize(), size_t{9});
+  bs.reset();
+  assertEqual(static_cast<int>(r.readDataType()), static_cast<int>(cbor::DataType::kNegativeInt));
+  assertTrue(r.getInt() == 0LL);
+  assertEqual(r.getReadSize(), size_t{18});
+  assertEqual(r.isNegativeOverflow(), true);
+  assertEqual(r.isUnsigned(), false);
 }

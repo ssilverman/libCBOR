@@ -45,8 +45,11 @@ bool expectFalse(Reader r);
 // is an unsigned value and false otherwise.
 bool expectUnsignedInt(Reader r, uint64_t *u);
 
-// Expects and fills in a negative value. This returns true if the data item
-// is a negative value and false otherwise.
+// Expects and fills in an integer value. This returns true if the data item
+// is an integer (signed or unsigned) and false otherwise.
+//
+// Please see the isUnsigned() and isNegativeOverflow() functions to
+// determine properties about the actual value.
 bool expectInt(Reader r, int64_t *i);
 
 // Expects bytes and fills in the length and a flag indicating whether it's

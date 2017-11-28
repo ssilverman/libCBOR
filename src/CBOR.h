@@ -144,9 +144,40 @@ class Reader : public Stream {
   // unsigned int.
   uint64_t getUnsignedInt() const;
 
-  // Returns the current negative int value, or 0 if the value isn't a
-  // negative int.
+  // Returns the current value as a 64-bit signed integer.
+  //
+  // For negative integers, this returns a positive value if the value
+  // cannot fit into a 64-bit signed integer. For these cases, it is as if
+  // the 65th bit is set to a 1 and the value is a 65-bit negative number.
+  // The isNegativeOverflow() function can detect this case.
+  //
+  // For unsigned integers, this will return a negative value if the
+  // value doesn't fit into 63 bits. The isUnsigned() function can detect
+  // this case.
+  //
+  // The functions, isNegativeOverflow() and isUnsigned(), can detect these
+  // two cases. This way, getInt() can be used to read the majority of
+  // integer values.
   int64_t getInt() const;
+
+  // Detects the case where the value is a negative integer and it is less
+  // than the smallest 64-bit negative number, or, in other words, a 65-bit
+  // negative integer with the 65th bit set to 1.
+  //
+  // This can never be true at the same time that isUnsigned() is true.
+  bool isNegativeOverflow() const;
+
+  // Detects when an integer is supposed to be positive. This is useful for
+  // when getInt() returns a negative number, but the value is actually
+  // positive and fits inside an unsigned integer.
+  //
+  // Another way of phrasing it: This is useful for when getInt() is used
+  // to retrieve signed values and the returned value is negative but the
+  // actual value is positive.
+  //
+  // This can never be true at the same time that isNegativeOverflow()
+  // is true.
+  bool isUnsigned() const;
 
   // Gets the simple value. Note that values < 32 are technically invalid,
   // even though they are well-formed. Values: 20=False, 21=True, 22=Null,
