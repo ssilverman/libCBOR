@@ -42,6 +42,9 @@ There are tests included in this project that rely on a project called
 out of the box on a Teensy, but some modifications may need to be made for
 ESP8266-based devices.
 
+Note that the code for ArduinoUnit is not included in this library and needs
+to be downloaded separately.
+
 ### Running the tests on an ESP8266-based device
 
 In ArduinoUnit's source, change `ArduinoUnitUtility/Compare.h` so that the
