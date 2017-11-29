@@ -32,7 +32,7 @@ This document details the changes between each release.
   `expectArray`, and `expectMap` for discovering indefinite-length data
   items.
 
-## Fixed
+### Fixed
 * `expectDoubleValue` was using a `float` internally.
 * `Reader::isWellFormed()` allowed nested indefinite-length bytes or text.
 * `Reader::getBoolean()` was allowing certain 1-byte simple values to
