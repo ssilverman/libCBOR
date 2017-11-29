@@ -2,6 +2,12 @@
 
 This document details the changes between each release.
 
+## [1.3.1]
+
+### Changed
+* Moved the tests to a folder named `src_tests` for now. This makes it easier
+  to directly reference this project as an Arduino and PlatformIO library.
+
 ## [1.3.0]
 
 ### Added
@@ -38,7 +44,7 @@ This document details the changes between each release.
 * `Reader::getBoolean()` was allowing certain 1-byte simple values to
   function as booleans.
 
-# libCBOR v1.2.0
+## libCBOR v1.2.0
 
 This release updates the API to include a way to access the read size and
 write size, and also makes the Reader and Writer classes implement Stream
@@ -47,7 +53,7 @@ implementations now provide a way to access the internal index (or address,
 in the case of EEPROM), for ease of determining how far reading or writing
 has progressed.
 
-# First libCBOR release
+## First libCBOR release
 
 Tag: v1.1.0
 
