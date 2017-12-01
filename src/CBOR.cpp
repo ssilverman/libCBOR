@@ -142,67 +142,71 @@ DataType Reader::readDataType() {
 
   if (state_ == State::kDetermineType) {
     state_ = State::kStart;
-    switch (majorType_) {
-      case kUnsignedInt:
-        return DataType::kUnsignedInt;
-      case kNegativeInt:
-        return DataType::kNegativeInt;
-      case kBytes:
-        return DataType::kBytes;
-      case kText:
-        return DataType::kText;
-      case kArray:
-        return DataType::kArray;
-      case kMap:
-        return DataType::kMap;
-      case kTag:
-        return DataType::kTag;
-      case kSimpleOrFloat:  // Floating-point numbers and simple data types
-        switch (addlInfo_) {
-          case 20:  // False
-          case 21:  // True
-            value_ = 0;
-            return DataType::kBoolean;
-          case 22:
-            value_ = 0;
-            return DataType::kNull;
-          case 23:
-            value_ = 0;
-            return DataType::kUndefined;
-          case 24:
-            // Values < 32 are invalid but technically well-formed, so
-            // don't do the following check:
-            // if (value_ < 32) {
-            //   syntaxError_ = SyntaxError::kBadSimpleValue;
-            //   return DataType::kSyntaxError;
-            // }
-            return DataType::kSimpleValue;
-            break;
-          case 25:
-          case 26:
-            return DataType::kFloat;
-          case 27:
-            return DataType::kDouble;
-          case 28:
-          case 29:
-          case 30:
-            // Shouldn't happen, caught before
-            syntaxError_ = SyntaxError::kUnknownAdditionalInfo;
-            return DataType::kSyntaxError;
-          case 31:
-            value_ = 0;
-            return DataType::kBreak;
-          default:
-            return DataType::kSimpleValue;
-        }
-        break;
-      default:
-        // Shouldn't happen
-        return DataType::kUnsignedInt;
-    }
+    return getDataType();
   }
 
   return DataType::kEOS;
+}
+
+DataType Reader::getDataType() {
+  switch (majorType_) {
+    case kUnsignedInt:
+      return DataType::kUnsignedInt;
+    case kNegativeInt:
+      return DataType::kNegativeInt;
+    case kBytes:
+      return DataType::kBytes;
+    case kText:
+      return DataType::kText;
+    case kArray:
+      return DataType::kArray;
+    case kMap:
+      return DataType::kMap;
+    case kTag:
+      return DataType::kTag;
+    case kSimpleOrFloat:  // Floating-point numbers and simple data types
+      switch (addlInfo_) {
+        case 20:  // False
+        case 21:  // True
+          value_ = 0;
+          return DataType::kBoolean;
+        case 22:
+          value_ = 0;
+          return DataType::kNull;
+        case 23:
+          value_ = 0;
+          return DataType::kUndefined;
+        case 24:
+          // Values < 32 are invalid but technically well-formed, so
+          // don't do the following check:
+          // if (value_ < 32) {
+          //   syntaxError_ = SyntaxError::kBadSimpleValue;
+          //   return DataType::kSyntaxError;
+          // }
+          return DataType::kSimpleValue;
+          break;
+        case 25:
+        case 26:
+          return DataType::kFloat;
+        case 27:
+          return DataType::kDouble;
+        case 28:
+        case 29:
+        case 30:
+          // Shouldn't happen, caught before
+          syntaxError_ = SyntaxError::kUnknownAdditionalInfo;
+          return DataType::kSyntaxError;
+        case 31:
+          value_ = 0;
+          return DataType::kBreak;
+        default:
+          return DataType::kSimpleValue;
+      }
+      break;
+    default:
+      // Shouldn't happen
+      return DataType::kUnsignedInt;
+  }
 }
 
 size_t Reader::readBytes(uint8_t *buffer, size_t length) {

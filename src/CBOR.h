@@ -87,7 +87,13 @@ class Reader : public Stream {
   //
   // For bytes, text, arrays, and maps, only the length will be retrieved;
   // further readBytes or readByte calls may be necessary.
+  //
+  // This advances the stream, unlike getDataType().
   DataType readDataType();
+
+  // Gets the current data type. This does not advance the stream, unlike
+  // readDataType().
+  DataType getDataType();
 
   // Reads data for bytes or text. It is up to the caller to read the correct
   // number of bytes, and also to concatenate any definite-length portions
