@@ -92,7 +92,9 @@ class Reader : public Stream {
   DataType readDataType();
 
   // Gets the current data type. This does not advance the stream, unlike
-  // readDataType().
+  // readDataType(). In order to return something valid, note that
+  // readDataType() must be called prior. This is not the same as a peek
+  // function.
   DataType getDataType();
 
   // Reads data for bytes or text. It is up to the caller to read the correct
