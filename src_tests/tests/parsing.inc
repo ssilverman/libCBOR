@@ -1,4 +1,4 @@
-// simple_value.inc is part of libCBOR.
+// parsing.inc is part of libCBOR.
 // (c) 2017 Shawn Silverman
 
 // Tests for the parsing helper functions.
@@ -50,7 +50,7 @@ test(expect_value_fails) {
   assertFalse(expectValue(r, cbor::DataType::kSyntaxError, 0));
 }
 
-test(expect_unsigned_value) {
+test(expect_value_unsigned) {
   uint8_t b[] = { (0 << 5) + 20 };
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader r{bs};
@@ -58,6 +58,16 @@ test(expect_unsigned_value) {
   bs.reset();
   b[0] = (0 << 5) + 21;
   assertFalse(expectValue(r, cbor::DataType::kUnsignedInt, 20));
+}
+
+test(expect_unsigned_value) {
+  uint8_t b[] = { (0 << 5) + 20 };
+  cbor::BytesStream bs{b, sizeof(b)};
+  cbor::Reader r{bs};
+  assertTrue(expectUnsignedIntValue(r, 20));
+  bs.reset();
+  b[0] = (0 << 5) + 21;
+  assertFalse(expectUnsignedIntValue(r, 20));
 }
 
 test(expect_unsigned) {
@@ -69,7 +79,7 @@ test(expect_unsigned) {
   assertTrue(u == 20);
 }
 
-test(expect_negative_value) {
+test(expect_value_negative) {
   uint8_t b[] = { (1 << 5) + 20 };
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader r{bs};
@@ -77,6 +87,16 @@ test(expect_negative_value) {
   bs.reset();
   b[0] = (1 << 5) + 21;
   assertFalse(expectValue(r, cbor::DataType::kNegativeInt, -21));
+}
+
+test(expect_negative_value) {
+  uint8_t b[] = { (1 << 5) + 20 };
+  cbor::BytesStream bs{b, sizeof(b)};
+  cbor::Reader r{bs};
+  assertTrue(expectIntValue(r, -21));
+  bs.reset();
+  b[0] = (1 << 5) + 21;
+  assertFalse(expectIntValue(r, -21));
 }
 
 test(expect_negative) {
@@ -88,7 +108,35 @@ test(expect_negative) {
   assertTrue(i == -21);
 }
 
-test(expect_simple_value) {
+test(expect_int_value_20) {
+  uint8_t b[] = { (0 << 5) + 20 };
+  cbor::BytesStream bs{b, sizeof(b)};
+  cbor::Reader r{bs};
+  assertTrue(expectIntValue(r, 20));
+  bs.reset();
+  b[0] = (0 << 5) + 21;
+  assertFalse(expectIntValue(r, 20));
+}
+
+test(expect_int_value_negative_overflow_fails) {
+  uint8_t b[] = { (1 << 5) + 27, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
+  cbor::BytesStream bs{b, sizeof(b)};
+  cbor::Reader r{bs};
+  assertFalse(expectIntValue(r, 0));
+  assertTrue(r.isNegativeOverflow());
+  assertTrue(r.getInt() == 0LL);
+}
+
+test(expect_int_value_unsigned_fails) {
+  uint8_t b[] = { (0 << 5) + 27, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
+  cbor::BytesStream bs{b, sizeof(b)};
+  cbor::Reader r{bs};
+  assertFalse(expectIntValue(r, -1));
+  assertTrue(r.isUnsigned());
+  assertTrue(r.getInt() == -1LL);
+}
+
+test(expect_value_simple_value) {
   uint8_t b[] = { (7 << 5) + 19 };
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader r{bs};
@@ -104,7 +152,7 @@ test(expect_simple_value) {
   assertEqual(v, uint8_t{18});
 }
 
-test(expect_tag_value) {
+test(expect_value_tag) {
   uint8_t b[] = { (6 << 5) + 20 };
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader r{bs};
@@ -112,6 +160,16 @@ test(expect_tag_value) {
   bs.reset();
   b[0] = (6 << 5) + 21;
   assertFalse(expectValue(r, cbor::DataType::kTag, 20));
+}
+
+test(expect_tag_value) {
+  uint8_t b[] = { (6 << 5) + 20 };
+  cbor::BytesStream bs{b, sizeof(b)};
+  cbor::Reader r{bs};
+  assertTrue(expectTagValue(r, 20));
+  bs.reset();
+  b[0] = (6 << 5) + 21;
+  assertFalse(expectTagValue(r, 20));
 }
 
 test(expect_tag) {
@@ -123,7 +181,7 @@ test(expect_tag) {
   assertTrue(t == 20);
 }
 
-test(expect_bytes_value) {
+test(expect_value_bytes) {
   uint8_t b[3] = { (2 << 5) + 20 };
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader r{bs};
@@ -133,31 +191,65 @@ test(expect_bytes_value) {
   assertFalse(expectValue(r, cbor::DataType::kBytes, 20));
 }
 
-test(expect_bytes) {
+test(expect_bytes_length) {
   uint8_t b[3] = { (2 << 5) + 20 };
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader r{bs};
-  uint64_t len;
-  bool isIndefinite;
-  assertTrue(expectBytes(r, &len, &isIndefinite));
-  assertTrue(len == 20);
-  assertFalse(isIndefinite);
+  assertTrue(expectBytesLength(r, 20));
+  assertFalse(r.isIndefiniteLength());
+  bs.reset();
+  assertFalse(expectBytesLength(r, 21));
 
   bs.reset();
   b[0] = (2 << 5) + 31;
   b[1] = (2 << 5) + 0;
   b[2] = (7 << 5) + 31;
-  assertTrue(expectBytes(r, &len, &isIndefinite));
-  assertTrue(isIndefinite);
-  bool isBreak;
+  assertTrue(expectBytesLength(r, 0));
+  assertTrue(r.isIndefiniteLength());
+  uint64_t len = 255;
+  bool isBreak = true;
   assertTrue(expectBytesOrBreak(r, &len, &isBreak));
   assertTrue(len == 0);
   assertEqual(isBreak, false);
+  len = 255;
+  isBreak = false;
   assertTrue(expectBytesOrBreak(r, &len, &isBreak));
+  assertTrue(len == 0);
   assertEqual(isBreak, true);
 }
 
-test(expect_text_value) {
+test(expect_bytes) {
+  uint8_t b[3] = { (2 << 5) + 20 };
+  cbor::BytesStream bs{b, sizeof(b)};
+  cbor::Reader r{bs};
+  uint64_t len = 0;
+  bool isIndefinite = true;
+  assertTrue(expectBytes(r, &len, &isIndefinite));
+  assertTrue(len == 20);
+  assertEqual(isIndefinite, false);
+
+  bs.reset();
+  b[0] = (2 << 5) + 31;
+  b[1] = (2 << 5) + 0;
+  b[2] = (7 << 5) + 31;
+  len = 255;
+  isIndefinite = false;
+  assertTrue(expectBytes(r, &len, &isIndefinite));
+  assertTrue(len == 0);
+  assertEqual(isIndefinite, true);
+  len = 255;
+  bool isBreak = true;
+  assertTrue(expectBytesOrBreak(r, &len, &isBreak));
+  assertTrue(len == 0);
+  assertEqual(isBreak, false);
+  len = 255;
+  isBreak = false;
+  assertTrue(expectBytesOrBreak(r, &len, &isBreak));
+  assertTrue(len == 0);
+  assertEqual(isBreak, true);
+}
+
+test(expect_value_text) {
   uint8_t b[3] = { (3 << 5) + 20 };
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader r{bs};
@@ -167,31 +259,65 @@ test(expect_text_value) {
   assertFalse(expectValue(r, cbor::DataType::kText, 20));
 }
 
-test(expect_text) {
+test(expect_text_length) {
   uint8_t b[3] = { (3 << 5) + 20 };
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader r{bs};
-  uint64_t len;
-  bool isIndefinite;
-  assertTrue(expectText(r, &len, &isIndefinite));
-  assertTrue(len == 20);
-  assertFalse(isIndefinite);
+  assertTrue(expectTextLength(r, 20));
+  assertFalse(r.isIndefiniteLength());
+  bs.reset();
+  assertFalse(expectTextLength(r, 21));
 
   bs.reset();
   b[0] = (3 << 5) + 31;
   b[1] = (3 << 5) + 0;
   b[2] = (7 << 5) + 31;
-  assertTrue(expectText(r, &len, &isIndefinite));
-  assertTrue(isIndefinite);
-  bool isBreak;
+  assertTrue(expectTextLength(r, 0));
+  assertTrue(r.isIndefiniteLength());
+  uint64_t len = 255;
+  bool isBreak = true;
   assertTrue(expectTextOrBreak(r, &len, &isBreak));
   assertTrue(len == 0);
   assertEqual(isBreak, false);
+  len = 255;
+  isBreak = false;
   assertTrue(expectTextOrBreak(r, &len, &isBreak));
+  assertTrue(len == 0);
   assertEqual(isBreak, true);
 }
 
-test(expect_array_value) {
+test(expect_text) {
+  uint8_t b[3] = { (3 << 5) + 20 };
+  cbor::BytesStream bs{b, sizeof(b)};
+  cbor::Reader r{bs};
+  uint64_t len = 0;
+  bool isIndefinite = true;
+  assertTrue(expectText(r, &len, &isIndefinite));
+  assertTrue(len == 20);
+  assertEqual(isIndefinite, false);
+
+  bs.reset();
+  b[0] = (3 << 5) + 31;
+  b[1] = (3 << 5) + 0;
+  b[2] = (7 << 5) + 31;
+  len = 255;
+  isIndefinite = false;
+  assertTrue(expectText(r, &len, &isIndefinite));
+  assertTrue(len == 0);
+  assertEqual(isIndefinite, true);
+  len = 255;
+  bool isBreak = true;
+  assertTrue(expectTextOrBreak(r, &len, &isBreak));
+  assertTrue(len == 0);
+  assertEqual(isBreak, false);
+  len = 255;
+  isBreak = false;
+  assertTrue(expectTextOrBreak(r, &len, &isBreak));
+  assertTrue(len == 0);
+  assertEqual(isBreak, true);
+}
+
+test(expect_value_array) {
   uint8_t b[] = { (4 << 5) + 20 };
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader r{bs};
@@ -201,23 +327,41 @@ test(expect_array_value) {
   assertFalse(expectValue(r, cbor::DataType::kArray, 20));
 }
 
+test(expect_array_length) {
+  uint8_t b[] = { (4 << 5) + 20 };
+  cbor::BytesStream bs{b, sizeof(b)};
+  cbor::Reader r{bs};
+  assertTrue(expectArrayLength(r, 20));
+  assertFalse(r.isIndefiniteLength());
+  bs.reset();
+  assertFalse(expectArrayLength(r, 21));
+
+  bs.reset();
+  b[0] = (4 << 5) + 31;
+  assertTrue(expectArrayLength(r, 0));
+  assertTrue(r.isIndefiniteLength());
+}
+
 test(expect_array) {
   uint8_t b[] = { (4 << 5) + 20 };
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader r{bs};
-  uint64_t len;
-  bool isIndefinite;
+  uint64_t len = 0;
+  bool isIndefinite = true;
   assertTrue(expectArray(r, &len, &isIndefinite));
   assertTrue(len == 20);
-  assertFalse(isIndefinite);
+  assertEqual(isIndefinite, false);
 
   bs.reset();
   b[0] = (4 << 5) + 31;
+  len = 255;
+  isIndefinite = false;
   assertTrue(expectArray(r, &len, &isIndefinite));
-  assertTrue(isIndefinite);
+  assertTrue(len == 0);
+  assertEqual(isIndefinite, true);
 }
 
-test(expect_map_value) {
+test(expect_value_map) {
   uint8_t b[] = { (5 << 5) + 20 };
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader r{bs};
@@ -227,20 +371,38 @@ test(expect_map_value) {
   assertFalse(expectValue(r, cbor::DataType::kMap, 20));
 }
 
+test(expect_map_length) {
+  uint8_t b[] = { (5 << 5) + 20 };
+  cbor::BytesStream bs{b, sizeof(b)};
+  cbor::Reader r{bs};
+  assertTrue(expectMapLength(r, 20));
+  assertFalse(r.isIndefiniteLength());
+  bs.reset();
+  assertFalse(expectMapLength(r, 21));
+
+  bs.reset();
+  b[0] = (5 << 5) + 31;
+  assertTrue(expectMapLength(r, 0));
+  assertTrue(r.isIndefiniteLength());
+}
+
 test(expect_map) {
   uint8_t b[] = { (5 << 5) + 20 };
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader r{bs};
-  uint64_t len;
-  bool isIndefinite;
+  uint64_t len = 0;
+  bool isIndefinite = true;
   assertTrue(expectMap(r, &len, &isIndefinite));
   assertTrue(len == 20);
-  assertFalse(isIndefinite);
+  assertEqual(isIndefinite, false);
 
   bs.reset();
   b[0] = (5 << 5) + 31;
+  len = 255;
+  isIndefinite = false;
   assertTrue(expectMap(r, &len, &isIndefinite));
-  assertTrue(isIndefinite);
+  assertTrue(len == 0);
+  assertEqual(isIndefinite, true);
 }
 
 test(expect_half_value) {
