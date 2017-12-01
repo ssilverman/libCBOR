@@ -18,7 +18,7 @@ This document details the changes between each release.
   items: bytes, text, arrays, maps.
 * Updated docs.
 
-## Fixed
+### Fixed
 * Changed all `Reader` parameters in the parsing helper functions to
   references instead of copies. Now the internal state is correctly
   maintained across helper function calls.
