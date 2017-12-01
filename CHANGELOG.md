@@ -2,6 +2,27 @@
 
 This document details the changes between each release.
 
+## [1.4.0]
+
+### Added
+* `Reader::getDataType()` function that returns the current data type without
+  advancing the stream.
+* Parsing helper functions that expect specific values for: unsigned ints,
+  ints, bytes with length, text with length, arrays with length, maps with
+  length, and tags. These join the other `expectXXXValue` functions.
+* More tests, including ones for detecting negative zero being different than
+  positive zero.
+
+### Changed
+* The length is now explicitly set to zero when parsing indefinite-length
+  items: bytes, text, arrays, maps.
+* Updated docs.
+
+## Fixed
+* Changed all `Reader` parameters in the parsing helper functions to
+  references instead of copies. Now the internal state is correctly
+  maintained across helper function calls.
+
 ## [1.3.1]
 
 ### Changed
