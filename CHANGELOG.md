@@ -2,6 +2,12 @@
 
 This document details the changes between each release.
 
+## [1.4.1]
+
+### Changed
+* `expectFloatValue` and `expectDoubleValue` now treat zero and negative
+  zero as equal.
+
 ## [1.4.0]
 
 ### Added
