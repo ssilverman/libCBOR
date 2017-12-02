@@ -54,11 +54,11 @@ bool expectArrayLength(Reader &r, uint64_t len);
 bool expectMapLength(Reader &r, uint64_t len);
 
 // Expects a specific half- or single-precision floating-point value. Zero
-// and negative zero are considered different values.
+// and negative zero are considered equal values.
 bool expectFloatValue(Reader &r, float f);
 
 // Expects a specific double-precision floating-point value. Zero and
-// negative zero are considered different values.
+// negative zero are considered equal values.
 bool expectDoubleValue(Reader &r, double d);
 
 // Expects a specific boolean value.

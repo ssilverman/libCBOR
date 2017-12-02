@@ -419,7 +419,7 @@ test(expect_half_value_neg_zero) {
   uint8_t b[] = { (7 << 5) + 25, 0x80, 0x00 };
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader r{bs};
-  assertFalse(expectFloatValue(r, 0.0f));
+  assertTrue(expectFloatValue(r, 0.0f));
   assertEqual(r.getFloat(), 0.0f);
   bs.reset();
   assertTrue(expectFloatValue(r, -0.0f));
@@ -448,7 +448,7 @@ test(expect_float_value_neg_zero) {
   uint8_t b[] = { (7 << 5) + 26, 0x80, 0x00, 0x00, 0x00 };
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader r{bs};
-  assertFalse(expectFloatValue(r, 0.0f));
+  assertTrue(expectFloatValue(r, 0.0f));
   assertEqual(r.getFloat(), 0.0f);
   bs.reset();
   assertTrue(expectFloatValue(r, -0.0f));
@@ -477,7 +477,7 @@ test(expect_double_value_neg_zero) {
   uint8_t b[] = { (7 << 5) + 27, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
   cbor::BytesStream bs{b, sizeof(b)};
   cbor::Reader r{bs};
-  assertFalse(expectDoubleValue(r, 0.0));
+  assertTrue(expectDoubleValue(r, 0.0));
   assertEqual(r.getDouble(), 0.0);
   bs.reset();
   assertTrue(expectDoubleValue(r, -0.0));

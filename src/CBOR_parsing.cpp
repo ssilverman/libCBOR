@@ -82,9 +82,10 @@ bool expectFloatValue(Reader &r, float f) {
   if (std::isnan(f)) {
     return std::isnan(v);
   }
-  if (f == 0.0f) {
-    return (v == 0) && (std::signbit(v) == std::signbit(f));
-  }
+  // If we wanted zero and negative zero to not match, use this:
+  // if (f == 0.0f) {
+  //   return (v == 0) && (std::signbit(v) == std::signbit(f));
+  // }
   return v == f;
 }
 
@@ -96,9 +97,10 @@ bool expectDoubleValue(Reader &r, double d) {
   if (std::isnan(d)) {
     return std::isnan(v);
   }
-  if (d == 0.0) {
-    return (v == 0) && (std::signbit(v) == std::signbit(d));
-  }
+  // If we wanted zero and negative zero to not match, use this:
+  // if (d == 0.0) {
+  //   return (v == 0) && (std::signbit(v) == std::signbit(d));
+  // }
   return v == d;
 }
 
