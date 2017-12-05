@@ -2,6 +2,18 @@
 
 This document details the changes between each release.
 
+## [1.5.0]
+
+### Added
+* `Reader::bytesAvailable()` function that returns the number of bytes
+  available in the current Bytes or Text data item.
+
+### Changed
+* Changed the behaviour of `readByte()` and `readBytes` in `Reader` to only
+  read up to the number of bytes available in the current Bytes or Text
+  data item.
+* `Reader::getDataType()` is now `const`.
+
 ## [1.4.1]
 
 ### Changed
