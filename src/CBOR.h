@@ -61,6 +61,7 @@ class Reader : public Stream {
         waitAvailable_(0),
         value_(0),
         syntaxError_(SyntaxError::kNoError),
+        bytesAvailable_(0),
         readSize_(0) {}
   ~Reader() = default;
 
@@ -95,23 +96,52 @@ class Reader : public Stream {
   // readDataType(). In order to return something valid, note that
   // readDataType() must be called prior. This is not the same as a peek
   // function.
-  DataType getDataType();
+  DataType getDataType() const;
 
   // Reads data for bytes or text. It is up to the caller to read the correct
   // number of bytes, and also to concatenate any definite-length portions
   // of an indefinite-length byte or text stream.
   //
+  // This will only read bytes and advance the stream if there are bytes
+  // available for the current Bytes or Text data item. In other words, this
+  // does not let the caller read past the number of bytes available in this
+  // data item. This will return 0 if there are no more bytes in the current
+  // data item, or if the underlying stream has reached end-of-stream.
+  //
+  // Note that it is possible for the underlying stream to reach
+  // end-of-stream with bytes still available for the current data item.
+  //
   // This follows the same contract as Stream::readBytes. The read error will
-  // probably have been set if end-of-stream was reached.
+  // probably have been set if end-of-stream for the underlying stream was
+  // reached.
+  //
+  // Use bytesAvailable() to determine how many bytes are actually available
+  // for this data item.
   size_t readBytes(uint8_t *buffer, size_t length);
 
   // Reads data for bytes or text. It is up to the caller to read the correct
   // number of bytes, and also to concatenate any definite-length portions
   // of an indefinite-length byte or text stream.
   //
-  // This follows the same contract as Stream::read(). This will return -1
-  // if end-of-stream was reached.
+  // This will only read a byte and advance the stream if there are bytes
+  // available for the current Bytes or Text data item. In other words, this
+  // does not let the caller read past the number of bytes available in this
+  // data item. This will return -1 if there are no more bytes in the current
+  // data item, or if the underlying stream has reached end-of-stream.
+  //
+  // Note that it is possible for the underlying stream to reach
+  // end-of-stream and for this to return -1, and still have bytes available
+  // for the current data item.
+  //
+  // Use bytesAvailable() to determine how many bytes are actually available
+  // for this data item.
   int readByte();
+
+  // Returns the number of bytes available for the current Bytes or Text
+  // data item.
+  uint64_t bytesAvailable() const {
+    return bytesAvailable_;
+  }
 
   // Returns the syntax error value if readDataType() returned
   // DataType::kSyntaxError.
@@ -291,6 +321,9 @@ class Reader : public Stream {
   int waitAvailable_;
   uint64_t value_;  // The simple or non-simple value after the major type
   SyntaxError syntaxError_;
+
+  // Bytes remaining for readByte() or readBytes.
+  uint64_t bytesAvailable_;
 
   size_t readSize_;
 };

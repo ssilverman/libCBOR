@@ -32,6 +32,7 @@ DataType Reader::readDataType() {
   if (state_ == State::kStart) {
     // Initialize everything to a default
     value_ = 0;
+    bytesAvailable_ = 0;
     syntaxError_ = SyntaxError::kNoError;
     initialByte_ = read();
     if (initialByte_ < 0) {
@@ -142,13 +143,30 @@ DataType Reader::readDataType() {
 
   if (state_ == State::kDetermineType) {
     state_ = State::kStart;
+    switch (majorType_) {
+      case kBytes:
+      case kText:
+        bytesAvailable_ = value_;
+        break;
+      case kSimpleOrFloat:
+        switch (addlInfo_) {
+          case 20:  // False
+          case 21:  // True
+          case 22:  // Null
+          case 23:  // Undefined
+          case 31:
+            value_ = 0;
+            break;
+        }
+        break;
+    }
     return getDataType();
   }
 
   return DataType::kEOS;
 }
 
-DataType Reader::getDataType() {
+DataType Reader::getDataType() const {
   switch (majorType_) {
     case kUnsignedInt:
       return DataType::kUnsignedInt;
@@ -168,13 +186,10 @@ DataType Reader::getDataType() {
       switch (addlInfo_) {
         case 20:  // False
         case 21:  // True
-          value_ = 0;
           return DataType::kBoolean;
         case 22:
-          value_ = 0;
           return DataType::kNull;
         case 23:
-          value_ = 0;
           return DataType::kUndefined;
         case 24:
           // Values < 32 are invalid but technically well-formed, so
@@ -194,10 +209,8 @@ DataType Reader::getDataType() {
         case 29:
         case 30:
           // Shouldn't happen, caught before
-          syntaxError_ = SyntaxError::kUnknownAdditionalInfo;
           return DataType::kSyntaxError;
         case 31:
-          value_ = 0;
           return DataType::kBreak;
         default:
           return DataType::kSimpleValue;
@@ -210,13 +223,27 @@ DataType Reader::getDataType() {
 }
 
 size_t Reader::readBytes(uint8_t *buffer, size_t length) {
+  if (bytesAvailable_ == 0) {
+    return 0;
+  }
+  if (length > bytesAvailable_) {
+    length = bytesAvailable_;
+  }
   size_t read = in_.readBytes(buffer, length);
   readSize_ += read;
+  bytesAvailable_ -= read;
   return read;
 }
 
 int Reader::readByte() {
-  return read();
+  if (bytesAvailable_ == 0) {
+    return -1;
+  }
+  int b = read();
+  if (b >= 0) {
+    bytesAvailable_--;
+  }
+  return b;
 }
 
 SyntaxError Reader::getSyntaxError() const {

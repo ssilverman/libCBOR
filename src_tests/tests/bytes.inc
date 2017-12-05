@@ -13,7 +13,9 @@ test(bytes_empty) {
   assertEqual(r.getReadSize(), size_t{1});
   bs.reset();
   assertEqual(static_cast<int>(r.readDataType()), static_cast<int>(cbor::DataType::kBytes));
+  assertTrue(r.bytesAvailable() == 0);
   assertTrue(r.getLength() == 0);
+  assertEqual(r.readByte(), -1);
   assertEqual(r.getReadSize(), size_t{2});
 }
 
@@ -25,10 +27,12 @@ test(bytes_something) {
   assertEqual(r.getReadSize(), size_t{5});
   bs.reset();
   assertEqual(static_cast<int>(r.readDataType()), static_cast<int>(cbor::DataType::kBytes));
+  assertTrue(r.bytesAvailable() == 4);
   assertTrue(r.getLength() == 4);
   uint8_t b2[5]{0};
   assertEqual(r.readBytes(b2, 4), size_t{4});
   assertEqual(reinterpret_cast<char*>(&b2[0]), reinterpret_cast<char*>(&b[1]));
+  assertEqual(r.readByte(), -1);
   assertEqual(r.getReadSize(), size_t{10});
 }
 
@@ -40,16 +44,23 @@ test(bytes_indefinite) {
   assertEqual(r.getReadSize(), size_t{9});
   bs.reset();
   assertEqual(static_cast<int>(r.readDataType()), static_cast<int>(cbor::DataType::kBytes));
+  assertTrue(r.bytesAvailable() == 0);
   assertTrue(r.isIndefiniteLength());
 
   uint8_t b2[6]{0};
   assertEqual(static_cast<int>(r.readDataType()), static_cast<int>(cbor::DataType::kBytes));
+  assertTrue(r.bytesAvailable() == 2);
   assertTrue(r.getLength() == 2);
   assertEqual(r.readBytes(&b2[0], 2), size_t{2});
+  assertEqual(r.readByte(), -1);
   assertEqual(static_cast<int>(r.readDataType()), static_cast<int>(cbor::DataType::kBytes));
+  assertTrue(r.bytesAvailable() == 3);
   assertTrue(r.getLength() == 3);
   assertEqual(r.readBytes(&b2[2], 3), size_t{3});
+  assertEqual(r.readByte(), -1);
+
   assertEqual(static_cast<int>(r.readDataType()), static_cast<int>(cbor::DataType::kBreak));
+  assertTrue(r.bytesAvailable() == 0);
 
   uint8_t b3[] = { 0x01, 0x02, 0x03, 0x04, 0x05, 0 };
   assertEqual(reinterpret_cast<char*>(b2), reinterpret_cast<char*>(b3));
@@ -64,11 +75,15 @@ test(bytes_indefinite_with_empty) {
   assertEqual(r.getReadSize(), size_t{3});
   bs.reset();
   assertEqual(static_cast<int>(r.readDataType()), static_cast<int>(cbor::DataType::kBytes));
+  assertTrue(r.bytesAvailable() == 0);
   assertTrue(r.isIndefiniteLength());
 
   assertEqual(static_cast<int>(r.readDataType()), static_cast<int>(cbor::DataType::kBytes));
+  assertTrue(r.bytesAvailable() == 0);
   assertTrue(r.getLength() == 0);
+  assertEqual(r.readByte(), -1);
   assertEqual(static_cast<int>(r.readDataType()), static_cast<int>(cbor::DataType::kBreak));
+  assertTrue(r.bytesAvailable() == 0);
 }
 
 test(bytes_indefinite_with_empty_and_nested_indefinite) {
@@ -87,8 +102,10 @@ test(bytes_empty_indefinite) {
   assertEqual(r.getReadSize(), size_t{2});
   bs.reset();
   assertEqual(static_cast<int>(r.readDataType()), static_cast<int>(cbor::DataType::kBytes));
+  assertTrue(r.bytesAvailable() == 0);
   assertTrue(r.isIndefiniteLength());
   assertEqual(static_cast<int>(r.readDataType()), static_cast<int>(cbor::DataType::kBreak));
+  assertTrue(r.bytesAvailable() == 0);
 }
 
 test(bytes_nested_indefinite) {
@@ -107,7 +124,9 @@ test(text_empty) {
   assertEqual(r.getReadSize(), size_t{1});
   bs.reset();
   assertEqual(static_cast<int>(r.readDataType()), static_cast<int>(cbor::DataType::kText));
+  assertTrue(r.bytesAvailable() == 0);
   assertTrue(r.getLength() == 0);
+  assertEqual(r.readByte(), -1);
   assertEqual(r.getReadSize(), size_t{2});
 }
 
@@ -119,10 +138,12 @@ test(text_something) {
   assertEqual(r.getReadSize(), size_t{5});
   bs.reset();
   assertEqual(static_cast<int>(r.readDataType()), static_cast<int>(cbor::DataType::kText));
+  assertTrue(r.bytesAvailable() == 4);
   assertTrue(r.getLength() == 4);
   uint8_t b2[5]{0};
   assertEqual(r.readBytes(b2, 4), size_t{4});
   assertEqual(reinterpret_cast<char*>(&b2[0]), reinterpret_cast<char*>(&b[1]));
+  assertEqual(r.readByte(), -1);
   assertEqual(r.getReadSize(), size_t{10});
 }
 
@@ -134,17 +155,23 @@ test(text_indefinite) {
   assertEqual(r.getReadSize(), size_t{13});
   bs.reset();
   assertEqual(static_cast<int>(r.readDataType()), static_cast<int>(cbor::DataType::kText));
+  assertTrue(r.bytesAvailable() == 0);
   assertTrue(r.isIndefiniteLength());
 
   uint8_t b2[10]{0};
   assertEqual(static_cast<int>(r.readDataType()), static_cast<int>(cbor::DataType::kText));
+  assertTrue(r.bytesAvailable() == 5);
   assertTrue(r.getLength() == 5);
   assertEqual(r.readBytes(&b2[0], 5), size_t{5});
+  assertEqual(r.readByte(), -1);
   assertEqual(static_cast<int>(r.readDataType()), static_cast<int>(cbor::DataType::kText));
+  assertTrue(r.bytesAvailable() == 4);
   assertTrue(r.getLength() == 4);
   assertEqual(r.readBytes(&b2[5], 4), size_t{4});
+  assertEqual(r.readByte(), -1);
 
   assertEqual(static_cast<int>(r.readDataType()), static_cast<int>(cbor::DataType::kBreak));
+  assertTrue(r.bytesAvailable() == 0);
 
   uint8_t b3[] = { 0x73, 0x74, 0x72, 0x65, 0x61, 0x6d, 0x69, 0x6e, 0x67, 0 };
   assertEqual(reinterpret_cast<char*>(b2), reinterpret_cast<char*>(b3));
@@ -159,11 +186,15 @@ test(text_indefinite_with_empty) {
   assertEqual(r.getReadSize(), size_t{3});
   bs.reset();
   assertEqual(static_cast<int>(r.readDataType()), static_cast<int>(cbor::DataType::kText));
+  assertTrue(r.bytesAvailable() == 0);
   assertTrue(r.isIndefiniteLength());
 
   assertEqual(static_cast<int>(r.readDataType()), static_cast<int>(cbor::DataType::kText));
+  assertTrue(r.bytesAvailable() == 0);
   assertTrue(r.getLength() == 0);
+  assertEqual(r.readByte(), -1);
   assertEqual(static_cast<int>(r.readDataType()), static_cast<int>(cbor::DataType::kBreak));
+  assertTrue(r.bytesAvailable() == 0);
 }
 
 test(text_indefinite_with_empty_and_nested_indefinite) {
@@ -182,8 +213,10 @@ test(text_empty_indefinite) {
   assertEqual(r.getReadSize(), size_t{2});
   bs.reset();
   assertEqual(static_cast<int>(r.readDataType()), static_cast<int>(cbor::DataType::kText));
+  assertTrue(r.bytesAvailable() == 0);
   assertTrue(r.isIndefiniteLength());
   assertEqual(static_cast<int>(r.readDataType()), static_cast<int>(cbor::DataType::kBreak));
+  assertTrue(r.bytesAvailable() == 0);
 }
 
 test(text_nested_indefinite) {
