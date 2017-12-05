@@ -2,6 +2,11 @@
 
 This document details the changes between each release.
 
+## [1.5.1]
+
+### Fixed
+* Removed the C-style comment line from `library.json`.
+
 ## [1.5.0]
 
 ### Added
