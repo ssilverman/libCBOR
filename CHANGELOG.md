@@ -104,3 +104,7 @@ Tag: v1.1.0
 This is the first release of the libCBOR library. It includes functions for
 reading and writing, and helper functions for parsing and for processing
 EEPROM.
+
+---
+
+Copyright (c) 2017-2018 Shawn Silverman
