@@ -2,6 +2,12 @@
 
 This document details the changes between each release.
 
+## [1.5.2]
+
+### Added
+
+* keywords.txt file.
+
 ## [1.5.1]
 
 ### Fixed
