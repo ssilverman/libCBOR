@@ -75,7 +75,7 @@ int EEPROMStream::peek() {
 
 size_t EEPROMPrint::write(uint8_t b) {
   if (static_cast<unsigned int>(address_) < size_) {
-#ifndef ESP8266
+#if !defined(ESP8266) && !defined(ESP32)
     EEPROM.update(address_++, b);
 #else
     if (EEPROM.read(address_) != b) {

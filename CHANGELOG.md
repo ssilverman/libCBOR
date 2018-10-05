@@ -2,6 +2,11 @@
 
 This document details the changes between each release.
 
+## [1.5.3]
+
+### Fixed
+* Compilation for ESP32.
+
 ## [1.5.2]
 
 ### Added

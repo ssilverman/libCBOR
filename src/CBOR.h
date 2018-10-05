@@ -69,7 +69,7 @@ class Reader : public Stream {
   // return zero if there is no error. An error may have occurred if
   // readBytes returns zero.
   int getReadError() {
-#ifndef ESP8266
+#if !defined(ESP8266) && !defined(ESP32)
     return in_.getReadError();
 #else
     return 0;
@@ -458,7 +458,7 @@ class Writer : public Print {
     return written;
   }
 
-#ifndef ESP8266
+#if !defined(ESP8266) && !defined(ESP32)
   void flush() override {
     out_.flush();
   }
