@@ -104,6 +104,7 @@ test(bytes_unavailable) {
   bs.reset();
   b[0] = (5 << 5) + 1;
   b[1] = (0 << 5) + 2;
+  b[2] = (0 << 5) + 3;
   assertTrue(r.isWellFormed());
   assertTrue(r.bytesAvailable() == 0);
   assertEqual(r.readByte(), -1);
