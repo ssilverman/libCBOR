@@ -1,6 +1,25 @@
-# Changelog
+# Changelog for libCBOR
 
 This document details the changes between each release.
+
+## [1.5.4]
+
+### Changed
+* Tested with
+  [ArduinoUnit v3.0.2](https://github.com/mmurdoch/arduinounit/releases/tag/v3.0.2).
+
+### Fixed
+* Fixed the map part of the `bytes_unavailable` test in `stream.inc`. It now
+  ensures that the value part of the map entry is there and not some
+  random value.
+* Compiles on more platforms (listed using PlatformIO board names): `teensylc`,
+  `teensy35`, `teensy36`, `esp12e`, `nucleo_f302r8`, `nucleo_f303k8`, and
+  `nucleo_f103rb`. This is in addition to just compiling and testing on
+  `teensy31`, `huzzah`, and `featheresp32`.
+* Now making use of PlatformIO's `build_unflags` to ensure that the
+  `-fsingle-precision-constant` does not take effect; the compiler was
+  complaining that some float literals were still overflowing, even though
+  `-fno-single-precision-constant` was being passed in `build_flags`.
 
 ## [1.5.3]
 
@@ -117,4 +136,4 @@ EEPROM.
 
 ---
 
-Copyright (c) 2017-2018 Shawn Silverman
+Copyright (c) 2017-2019 Shawn Silverman
