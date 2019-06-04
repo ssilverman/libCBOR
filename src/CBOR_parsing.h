@@ -6,7 +6,15 @@
 #define CBOR_PARSING_H_
 
 // C++ includes
+#ifdef __has_include
+#if __has_include(<cstdint>)
 #include <cstdint>
+#else
+#include <stdint.h>
+#endif
+#else
+#include <cstdint>
+#endif
 
 // Project includes
 #include "CBOR.h"

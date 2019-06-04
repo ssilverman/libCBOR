@@ -65,11 +65,11 @@ class Reader : public Stream {
         readSize_(0) {}
   ~Reader() = default;
 
-  // Returns any read error in the underlying Stream object. This will
-  // return zero if there is no error. An error may have occurred if
-  // readBytes returns zero.
+  // Returns any read error in the underlying Stream object. This will return
+  // zero if there is no error or if the platform does not support this. An
+  // error may have occurred if readBytes returns zero.
   int getReadError() {
-#if !defined(ESP8266) && !defined(ESP32)
+#if defined(TEENSYDUINO)
     return in_.getReadError();
 #else
     return 0;
@@ -247,7 +247,7 @@ class Reader : public Stream {
   // with a stream that can be reset.
   //
   // This calls yield() at the end of the function if the processor is
-  // an ESP8266.
+  // an ESP8266 or ESP32.
   //
   // This advances the read size. See getReadSize().
   bool isWellFormed();
@@ -458,13 +458,13 @@ class Writer : public Print {
     return written;
   }
 
-#if !defined(ESP8266) && !defined(ESP32)
+#if !defined(ESP8266) && !defined(ESP32) && !defined(ARDUINO_ARCH_STM32)
   void flush() override {
     out_.flush();
   }
 #else
   void flush() {
-    // Print does not have flush() in ESP8266
+    // Print does not have flush() in ESP8266, ESP32, and STM32
   }
 #endif
 

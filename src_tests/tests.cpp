@@ -4,8 +4,21 @@
 #include "tests.h"
 
 // C++ includes
+#ifdef __has_include
+#if __has_include(<cmath>)
+#include <cmath>
+#else
+#include <math.h>
+#endif
+#if __has_include(<cstdint>)
+#include <cstdint>
+#else
+#include <stdint.h>
+#endif
+#else
 #include <cmath>
 #include <cstdint>
+#endif
 
 // Other includes
 #include <Arduino.h>

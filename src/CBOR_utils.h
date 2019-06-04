@@ -6,7 +6,15 @@
 #define CBOR_UTILS_H_
 
 // C++ includes
+#ifdef __has_include
+#if __has_include(<cstddef>)
 #include <cstddef>
+#else
+#include <stddef.h>
+#endif
+#else
+#include <cstddef>
+#endif
 
 namespace qindesign {
 namespace cbor {

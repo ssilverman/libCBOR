@@ -167,7 +167,7 @@ class EEPROMPrint : public Print {
   // not hold the byte.
   size_t write(uint8_t b) override;
 
-#if !defined(ESP8266) && !defined(ESP32)
+#if !defined(ESP8266) && !defined(ESP32) && !defined(ARDUINO_ARCH_STM32)
   void flush() override;
 #else
   void flush();

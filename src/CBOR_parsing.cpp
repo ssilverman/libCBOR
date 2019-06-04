@@ -4,7 +4,15 @@
 #include "CBOR_parsing.h"
 
 // C++ includes
+#ifdef __has_include
+#if __has_include(<cmath>)
 #include <cmath>
+#else
+#include <math.h>
+#endif
+#else
+#include <cmath>
+#endif
 
 // Other includes
 #include <Arduino.h>
