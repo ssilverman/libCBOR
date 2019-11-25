@@ -2,6 +2,15 @@
 
 This document details the changes between each release.
 
+## [1.6.0]
+
+### Added
+* Added new `expectDefiniteBytes` and `expectDefiniteText` functions
+  to `CBOR_parsing`. These test for a specific sequence of bytes or text.
+
+### Fixed
+* Added a header guard to `CBOR_streams.h`.
+
 ## [1.5.4]
 
 ### Changed
