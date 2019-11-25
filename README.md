@@ -1,4 +1,4 @@
-# Readme for libCBOR v1.5.4
+# Readme for libCBOR v1.6.0
 
 This is a library for processing CBOR
 [RFC 7049](https://tools.ietf.org/html/rfc7049) data.
