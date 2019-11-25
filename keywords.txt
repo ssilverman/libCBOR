@@ -74,8 +74,10 @@ expectTagValue	KEYWORD2
 expectUnsignedInt	KEYWORD2
 expectInt	KEYWORD2
 expectBytes	KEYWORD2
+expectDefiniteBytes KEYWORD2
 expectBytesOrBreak	KEYWORD2
 expectText	KEYWORD2
+expectDefiniteText KEYWORD2
 expectTextOrBreak	KEYWORD2
 expectArray	KEYWORD2
 expectMap	KEYWORD2
