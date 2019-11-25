@@ -3,6 +3,9 @@
 // This is part of libCBOR.
 // (c) 2017 Shawn Silverman
 
+#ifndef CBOR_STREAMS_H_
+#define CBOR_STREAMS_H_
+
 // Other includes
 #include <Print.h>
 #include <Stream.h>
@@ -191,3 +194,5 @@ class EEPROMPrint : public Print {
 
 }  // namespace cbor
 }  // namespace qindesign
+
+#endif  // CBOR_STREAMS_H_
