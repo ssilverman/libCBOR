@@ -5,12 +5,18 @@
 
 // C++ includes
 #ifdef __has_include
+#if __has_include(<climits>)
+#include <climits>
+#else
+#include <limits.h>
+#endif
 #if __has_include(<cmath>)
 #include <cmath>
 #else
 #include <math.h>
 #endif
 #else
+#include <climits>
 #include <cmath>
 #endif
 
@@ -162,6 +168,33 @@ bool expectBytes(Reader &r, uint64_t *length, bool *isIndefinite) {
   return true;
 }
 
+bool expectDefiniteBytes(Reader &r, const uint8_t *b, uint64_t len) {
+  if (r.readDataType() != DataType::kBytes ||
+      r.isIndefiniteLength() ||
+      r.getLength() != len) {
+    return false;
+  }
+
+  if (b == nullptr) {
+    return true;
+  }
+
+  if (len <= INT_MAX) {
+    for (int i = len; --i >= 0; ) {
+      if (r.readByte() != *(b++)) {
+        return false;
+      }
+    }
+  } else {
+    for (uint64_t i = len; --i >= 0; ) {
+      if (r.readByte() != *(b++)) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
 bool expectBytesOrBreak(Reader &r, uint64_t *length, bool *isBreak) {
   switch (r.readDataType()) {
     case DataType::kBytes:
@@ -188,6 +221,33 @@ bool expectText(Reader &r, uint64_t *length, bool *isIndefinite) {
   } else {
     *isIndefinite = false;
     *length = r.getLength();
+  }
+  return true;
+}
+
+bool expectDefiniteText(Reader &r, const uint8_t *b, uint64_t len) {
+  if (r.readDataType() != DataType::kText ||
+      r.isIndefiniteLength() ||
+      r.getLength() != len) {
+    return false;
+  }
+
+  if (b == nullptr) {
+    return true;
+  }
+
+  if (len <= INT_MAX) {
+    for (int i = len; --i >= 0; ) {
+      if (r.readByte() != *(b++)) {
+        return false;
+      }
+    }
+  } else {
+    for (uint64_t i = len; --i >= 0; ) {
+      if (r.readByte() != *(b++)) {
+        return false;
+      }
+    }
   }
   return true;
 }

@@ -103,6 +103,10 @@ bool expectInt(Reader &r, int64_t *i);
 // For indefinite-length bytes, length will be set to zero.
 bool expectBytes(Reader &r, uint64_t *length, bool *isIndefinite);
 
+// Expects non-indefinite-length bytes having the given length. It is assumed
+// that a null byte array matches anything.
+bool expectDefiniteBytes(Reader &r, const uint8_t *b, uint64_t len);
+
 // Expects bytes and fills in the length and a flag indicating whether a
 // Break was found. This is used to detect the chunks following an
 // indefinite-length bytes data item.
@@ -120,6 +124,10 @@ bool expectBytesOrBreak(Reader &r, uint64_t *length, bool *isBreak);
 //
 // For indefinite-length text, length will be set to zero.
 bool expectText(Reader &r, uint64_t *length, bool *isIndefinite);
+
+// Expects non-indefinite-length text having the given length. It is assumed
+// that a null byte array matches anything.
+bool expectDefiniteText(Reader &r, const uint8_t *b, uint64_t len);
 
 // Expects text and fills in the length and a flag indicating whether a
 // Break was found. This is used to detect the chunks following an
