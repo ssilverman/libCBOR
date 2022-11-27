@@ -105,6 +105,8 @@ class BytesPrint : public Print {
   size_t index_;
 };
 
+#ifdef __has_include
+#if __has_include(<EEPROM.h>)
 // Stream implementation for the EEPROM. This intended as an input-only
 // implementation; the required Print methods do nothing.
 class EEPROMStream : public Stream {
@@ -191,6 +193,8 @@ class EEPROMPrint : public Print {
   int start_;
   int address_;
 };
+#endif
+#endif
 
 }  // namespace cbor
 }  // namespace qindesign
