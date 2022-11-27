@@ -10,6 +10,8 @@
 namespace qindesign {
 namespace cbor {
 
+#ifdef __has_include
+#if __has_include(<EEPROM.h>)
 bool isEEPROMWellFormed(size_t eepromSize, int address) {
   if (address < 0 || eepromSize == 0) {
     return false;
@@ -18,6 +20,8 @@ bool isEEPROMWellFormed(size_t eepromSize, int address) {
   Reader cbor{es};
   return cbor.isWellFormed();
 }
+#endif
+#endif
 
 }  // namespace cbor
 }  // namespace qindesign

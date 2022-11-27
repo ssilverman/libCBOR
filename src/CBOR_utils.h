@@ -19,12 +19,16 @@
 namespace qindesign {
 namespace cbor {
 
+#ifdef __has_include
+#if __has_include(<EEPROM.h>)
 // Checks if the data in the EEPROM at the given input stream is valid CBOR.
 // It is assumed that EEPROM has been initialized and that the EEPROM size
 // and address are valid.
 //
 // This returns false if the address is negative or the EEPROM size is zero.
 bool isEEPROMWellFormed(size_t eepromSize, int address);
+#endif
+#endif
 
 }  // namespace cbor
 }  // namespace qindesign

@@ -4,7 +4,11 @@
 #include "CBOR_streams.h"
 
 // Other includes
+#ifdef __has_include
+#if __has_include(<EEPROM.h>)
 #include <EEPROM.h>
+#endif
+#endif
 
 namespace qindesign {
 namespace cbor {
@@ -52,6 +56,8 @@ size_t BytesPrint::write(uint8_t b) {
   return 0;
 }
 
+#ifdef __has_include
+#if __has_include(<EEPROM.h>)
 int EEPROMStream::available() {
   if (static_cast<unsigned int>(address_) >= size_) {
     return 0;
@@ -91,6 +97,8 @@ size_t EEPROMPrint::write(uint8_t b) {
 
 void EEPROMPrint::flush() {
 }
+#endif
+#endif
 
 }  // namespace cbor
 }  // namespace qindesign
