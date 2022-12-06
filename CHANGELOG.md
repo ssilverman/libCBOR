@@ -2,6 +2,11 @@
 
 This document details the changes between each release.
 
+## [1.6.1]
+
+### Changed
+* Only compile EEPROM things if EEPROM.h (and `__has_include`) exists.
+
 ## [1.6.0]
 
 ### Added
